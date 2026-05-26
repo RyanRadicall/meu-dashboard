@@ -1,4 +1,4 @@
-// App.jsx - Versão Completa e Dinâmica
+// App.jsx
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -20,28 +20,31 @@ const TOKEN = {
   textMuted: "#475569",
 };
 
+// ── Tiny utility ──────────────────────────────────────────────────────────────
 const cx = (...args) => args.filter(Boolean).join(" ");
 
-// ── Icons ────────────────────────────────────────────────────────────────────────
+// ── Icons (inline SVG) ────────────────────────────────────────────────────────
 const Icon = {
-  home: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg> ),
-  book: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}><path d="M4 19.5A2.5 2.5 0 016.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" /></svg> ),
-  calendar: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg> ),
-  zap: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg> ),
-  chart: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg> ),
-  refresh: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}><polyline points="23 4 23 10 17 10" /><polyline points="1 20 1 14 7 14" /><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" /></svg> ),
-  target: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg> ),
-  settings: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" /></svg> ),
-  bell: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg> ),
-  star: ( <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth={1.5}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg> ),
-  play: ( <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3" /></svg> ),
-  upload: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}><polyline points="16 16 12 12 8 16" /><line x1="12" y1="12" x2="12" y2="21" /><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3" /></svg> ),
-  check: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><polyline points="20 6 9 17 4 12" /></svg> ),
-  trash: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" /></svg> ),
-  download: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}><polyline points="8 17 12 21 16 17" /><line x1="12" y1="12" x2="12" y2="21" /><path d="M20.88 18.09A5 5 0 0018 9h-1.26A8 8 0 103 16.29" /></svg> ),
+  home: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg> ),
+  book: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M4 19.5A2.5 2.5 0 016.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" /></svg> ),
+  calendar: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg> ),
+  zap: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg> ),
+  chart: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg> ),
+  refresh: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><polyline points="23 4 23 10 17 10" /><polyline points="1 20 1 14 7 14" /><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" /></svg> ),
+  target: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg> ),
+  user: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg> ),
+  settings: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" /></svg> ),
+  bell: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg> ),
+  star: ( <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg> ),
+  flame: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 01-7 7 7 7 0 01-7-7c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z" /></svg> ),
+  upload: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><polyline points="16 16 12 12 8 16" /><line x1="12" y1="12" x2="12" y2="21" /><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3" /></svg> ),
+  check: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><polyline points="20 6 9 17 4 12" /></svg> ),
+  brain: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M9.5 2A2.5 2.5 0 017 4.5v0A2.5 2.5 0 014.5 7v0A2.5 2.5 0 012 9.5v5A2.5 2.5 0 004.5 17v0A2.5 2.5 0 007 19.5v0A2.5 2.5 0 009.5 22h5a2.5 2.5 0 002.5-2.5v0a2.5 2.5 0 002.5-2.5v0a2.5 2.5 0 002.5-2.5v-5A2.5 2.5 0 0019.5 7v0A2.5 2.5 0 0017 4.5v0A2.5 2.5 0 0014.5 2z" /></svg> ),
+  play: ( <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><polygon points="5 3 19 12 5 21 5 3" /></svg> ),
+  trophy: ( <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><polyline points="8 21 12 17 16 21" /><line x1="12" y1="17" x2="12" y2="11" /><path d="M7 4V2H17V4" /><path d="M7 4h10l1 7c.5 3.5-2 5-3 5H9c-1 0-3.5-1.5-3-5L7 4z" /><path d="M4 4h2M18 4h2M4 4c0 3.5 0 5-1 6M20 4c0 3.5 0 5 1 6" /></svg> ),
 };
 
-// ── Componentes Base ────────────────────────────────────────────────────────────
+// ── Glassmorphism card ─────────────────────────────────────────────────────────
 const GlassCard = ({ children, className = "", glow = false, onClick }) => (
   <motion.div
     onClick={onClick}
@@ -60,6 +63,7 @@ const GlassCard = ({ children, className = "", glow = false, onClick }) => (
   </motion.div>
 );
 
+// ── Neon pill badge ────────────────────────────────────────────────────────────
 const Badge = ({ children, color = "blue" }) => {
   const colors = {
     blue: { bg: "rgba(56,139,253,0.15)", text: "#388BFD", border: "rgba(56,139,253,0.3)" },
@@ -76,35 +80,38 @@ const Badge = ({ children, color = "blue" }) => {
   );
 };
 
+// ── Progress bar ───────────────────────────────────────────────────────────────
 const ProgressBar = ({ value, color = TOKEN.blue, height = 4 }) => (
   <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: 99, overflow: "hidden", height }}>
     <motion.div
       initial={{ width: 0 }}
-      animate={{ width: `${Math.min(100, Math.max(0, value))}%` }}
-      transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+      animate={{ width: `${value}%` }}
+      transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
       style={{ height: "100%", background: `linear-gradient(90deg, ${color}, ${color}cc)`, borderRadius: 99, boxShadow: `0 0 8px ${color}66` }}
     />
   </div>
 );
 
+// ── Streak flame ───────────────────────────────────────────────────────────────
 const StreakWidget = ({ days = 12 }) => (
   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
     <motion.div animate={{ scale: [1, 1.08, 1] }} transition={{ repeat: Infinity, duration: 2 }}
       style={{ fontSize: 28, filter: "drop-shadow(0 0 12px #F97316)" }}>🔥</motion.div>
     <div style={{ fontSize: 24, fontWeight: 800, color: TOKEN.orange, lineHeight: 1, fontFamily: "'Syne', sans-serif" }}>{days}</div>
-    <div style={{ fontSize: 11, color: TOKEN.textMuted, fontWeight: 500 }}>dias consecutivos</div>
+    <div style={{ fontSize: 11, color: TOKEN.textMuted, fontWeight: 500 }}>day streak</div>
   </div>
 );
 
+// ── XP / Level bar ─────────────────────────────────────────────────────────────
 const XPBar = ({ level = 7, xp = 2340, maxXp = 3000 }) => (
-  <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-    <motion.div whileHover={{ scale: 1.05 }} style={{
+  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+    <div style={{
       width: 36, height: 36, borderRadius: 10,
       background: `linear-gradient(135deg, ${TOKEN.purple}, ${TOKEN.blue})`,
       display: "flex", alignItems: "center", justifyContent: "center",
       fontSize: 13, fontWeight: 800, color: "#fff",
       boxShadow: `0 0 16px ${TOKEN.purple}55`,
-    }}>Lv{level}</motion.div>
+    }}>Lv{level}</div>
     <div style={{ flex: 1 }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
         <span style={{ fontSize: 11, color: TOKEN.textSecondary, fontWeight: 500 }}>{xp} XP</span>
@@ -112,42 +119,8 @@ const XPBar = ({ level = 7, xp = 2340, maxXp = 3000 }) => (
       </div>
       <ProgressBar value={(xp / maxXp) * 100} color={TOKEN.purple} height={5} />
     </div>
-  </motion.div>
+  </div>
 );
-
-// ── Toast Notification ──────────────────────────────────────────────────────────
-const Toast = ({ message, type, onClose }) => {
-  useEffect(() => {
-    const timer = setTimeout(onClose, 3000);
-    return () => clearTimeout(timer);
-  }, [onClose]);
-
-  const colors = {
-    success: { bg: "rgba(34,197,94,0.15)", border: "rgba(34,197,94,0.4)", text: TOKEN.green },
-    error: { bg: "rgba(239,68,68,0.15)", border: "rgba(239,68,68,0.4)", text: TOKEN.red },
-    info: { bg: "rgba(56,139,253,0.15)", border: "rgba(56,139,253,0.4)", text: TOKEN.blue },
-  };
-  const c = colors[type] || colors.info;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: 50 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 50 }}
-      style={{
-        position: "fixed", bottom: 20, right: 20, zIndex: 1000,
-        padding: "12px 20px", borderRadius: 10,
-        background: c.bg, border: `1px solid ${c.border}`,
-        backdropFilter: "blur(20px)",
-        color: c.text, fontSize: 13, fontWeight: 500,
-        display: "flex", alignItems: "center", gap: 10,
-      }}
-    >
-      <span>{type === "success" ? "✅" : type === "error" ? "❌" : "ℹ️"}</span>
-      {message}
-    </motion.div>
-  );
-};
 
 // ── Sidebar ────────────────────────────────────────────────────────────────────
 const NAV = [
@@ -158,17 +131,16 @@ const NAV = [
   { id: "performance", label: "Desempenho", icon: Icon.chart },
   { id: "reviews", label: "Revisões", icon: Icon.refresh },
   { id: "goals", label: "Metas", icon: Icon.target },
-  { id: "materials", label: "Materiais", icon: Icon.upload },
 ];
 
-const Sidebar = ({ active, onNav, userProgress }) => {
+const Sidebar = ({ active, onNav, userProgress, onUpdateProgress }) => {
   return (
     <motion.aside
       initial={{ x: -40, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
       style={{
-        width: 240, flexShrink: 0, height: "100vh", display: "flex", flexDirection: "column",
+        width: 220, flexShrink: 0, height: "100vh", display: "flex", flexDirection: "column",
         background: "linear-gradient(180deg, rgba(8,16,36,0.98) 0%, rgba(5,10,20,0.98) 100%)",
         borderRight: `1px solid ${TOKEN.border}`,
         backdropFilter: "blur(40px)",
@@ -176,6 +148,7 @@ const Sidebar = ({ active, onNav, userProgress }) => {
         padding: "24px 0",
       }}
     >
+      {/* Logo */}
       <div style={{ padding: "0 20px 24px", borderBottom: `1px solid ${TOKEN.border}` }}>
         <motion.div whileHover={{ scale: 1.03 }} style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
           <div style={{
@@ -184,18 +157,19 @@ const Sidebar = ({ active, onNav, userProgress }) => {
             display: "flex", alignItems: "center", justifyContent: "center",
             boxShadow: `0 0 20px ${TOKEN.blue}55`,
           }}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} style={{ width: 18, height: 18 }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ width: 18, height: 18 }}>
               <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" /><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" />
             </svg>
           </div>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: TOKEN.textPrimary, letterSpacing: "-0.02em", fontFamily: "'Syne', sans-serif", lineHeight: 1.1 }}>MeuEstudo</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: TOKEN.textPrimary, letterSpacing: "-0.02em", fontFamily: "'Syne', sans-serif", lineHeight: 1.1 }}>MeuEstudo</div>
             <div style={{ fontSize: 10, color: TOKEN.cyan, fontWeight: 600, letterSpacing: "0.08em" }}>CONTÁBIL</div>
           </div>
         </motion.div>
       </div>
 
-      <nav style={{ flex: 1, padding: "16px 12px", display: "flex", flexDirection: "column", gap: 4 }}>
+      {/* Nav */}
+      <nav style={{ flex: 1, padding: "16px 12px", display: "flex", flexDirection: "column", gap: 2 }}>
         {NAV.map((item, i) => {
           const isActive = active === item.id;
           return (
@@ -204,95 +178,81 @@ const Sidebar = ({ active, onNav, userProgress }) => {
               onClick={() => onNav(item.id)}
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: i * 0.03 }}
-              whileHover={{ x: 4 }}
+              transition={{ delay: i * 0.04 + 0.1 }}
+              whileHover={{ x: 2 }}
               style={{
-                display: "flex", alignItems: "center", gap: 12,
-                padding: "10px 14px", borderRadius: 10, border: "none", cursor: "pointer",
+                display: "flex", alignItems: "center", gap: 10,
+                padding: "9px 12px", borderRadius: 10, border: "none", cursor: "pointer",
                 background: isActive ? "rgba(56,139,253,0.15)" : "transparent",
                 color: isActive ? TOKEN.blue : TOKEN.textMuted,
                 fontWeight: isActive ? 600 : 400, fontSize: 13,
                 transition: "all 0.15s",
                 position: "relative",
+                boxShadow: isActive ? `inset 0 0 0 1px rgba(56,139,253,0.2)` : "none",
               }}
             >
               {isActive && (
                 <motion.div layoutId="sidebar-active"
-                  style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, background: TOKEN.blue, borderRadius: 99, boxShadow: `0 0 12px ${TOKEN.blue}` }}
+                  style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 2.5, background: TOKEN.blue, borderRadius: 99, boxShadow: `0 0 12px ${TOKEN.blue}` }}
                 />
               )}
-              <span style={{ width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>{item.icon}</span>
-              <span>{item.label}</span>
+              <span style={{ opacity: isActive ? 1 : 0.7 }}>{item.icon}</span>
+              <span style={{ fontFamily: "'DM Sans', sans-serif" }}>{item.label}</span>
             </motion.button>
           );
         })}
       </nav>
 
-      <div style={{ padding: "16px 12px", borderTop: `1px solid ${TOKEN.border}` }}>
+      {/* Bottom section */}
+      <div style={{ padding: "16px 12px", borderTop: `1px solid ${TOKEN.border}`, display: "flex", flexDirection: "column", gap: 10 }}>
         <XPBar level={userProgress.level} xp={userProgress.xp} maxXp={userProgress.maxXp} />
-        <motion.div whileHover={{ scale: 1.02 }} style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 12, padding: "8px 10px", borderRadius: 10, background: "rgba(255,255,255,0.03)", cursor: "pointer" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", borderRadius: 10, background: "rgba(255,255,255,0.03)", cursor: "pointer" }}>
           <div style={{
-            width: 32, height: 32, borderRadius: 8,
+            width: 30, height: 30, borderRadius: 8,
             background: `linear-gradient(135deg, ${TOKEN.purple}, #7c3aed)`,
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 14,
+            fontSize: 13, boxShadow: `0 0 12px ${TOKEN.purple}44`,
           }}>👤</div>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 12, fontWeight: 600, color: TOKEN.textPrimary }}>Estudante</div>
             <div style={{ fontSize: 10, color: TOKEN.textMuted }}>Ciências Contábeis</div>
           </div>
-          <div style={{ width: 20, height: 20, opacity: 0.5 }}>{Icon.settings}</div>
-        </motion.div>
+          {Icon.settings}
+        </div>
       </div>
     </motion.aside>
   );
 };
 
 // ── Topbar ─────────────────────────────────────────────────────────────────────
-const Topbar = ({ title, streak, notifications, onClearNotification }) => (
+const Topbar = ({ title, streak, onAddXP }) => (
   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
     <div>
       <motion.h1 initial={{ y: -10, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-        style={{ fontSize: 24, fontWeight: 800, color: TOKEN.textPrimary, letterSpacing: "-0.04em", margin: 0, fontFamily: "'Syne', sans-serif" }}>
+        style={{ fontSize: 22, fontWeight: 800, color: TOKEN.textPrimary, letterSpacing: "-0.04em", margin: 0, fontFamily: "'Syne', sans-serif" }}>
         {title}
       </motion.h1>
       <motion.p initial={{ y: -6, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.05 }}
-        style={{ fontSize: 13, color: TOKEN.textMuted, margin: "4px 0 0" }}>
+        style={{ fontSize: 13, color: TOKEN.textMuted, margin: "2px 0 0", fontFamily: "'DM Sans', sans-serif" }}>
         {new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
       </motion.p>
     </div>
-    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
       <motion.div whileHover={{ scale: 1.05 }} style={{
         display: "flex", alignItems: "center", gap: 6, padding: "7px 14px", borderRadius: 10,
         background: TOKEN.glass, border: `1px solid ${TOKEN.border}`,
         cursor: "pointer", backdropFilter: "blur(12px)",
       }}>
-        <span style={{ fontSize: 12, color: TOKEN.textSecondary }}>⌘ K</span>
+        <span style={{ fontSize: 12, color: TOKEN.textSecondary, fontFamily: "'DM Sans', sans-serif" }}>⌘ K</span>
       </motion.div>
-      
-      <div style={{ position: "relative" }}>
-        <motion.button whileHover={{ scale: 1.05 }} style={{
-          width: 38, height: 38, borderRadius: 10, border: `1px solid ${TOKEN.border}`,
-          background: TOKEN.glass, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-          color: TOKEN.textSecondary, backdropFilter: "blur(12px)",
-        }}>
-          {Icon.bell}
-          {notifications.length > 0 && (
-            <span style={{ position: "absolute", top: 6, right: 6, width: 8, height: 8, borderRadius: 99, background: TOKEN.orange, boxShadow: `0 0 6px ${TOKEN.orange}` }} />
-          )}
-        </motion.button>
-        {notifications.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-            style={{ position: "absolute", top: 45, right: 0, width: 260, background: TOKEN.surface, backdropFilter: "blur(20px)", borderRadius: 12, border: `1px solid ${TOKEN.border}`, overflow: "hidden", zIndex: 100 }}>
-            {notifications.slice(0, 3).map((n, i) => (
-              <div key={i} style={{ padding: "10px 14px", borderBottom: `1px solid ${TOKEN.border}`, fontSize: 12, color: TOKEN.textSecondary }}>
-                {n}
-              </div>
-            ))}
-          </motion.div>
-        )}
-      </div>
-      
+      <motion.button whileHover={{ scale: 1.05 }} style={{
+        width: 36, height: 36, borderRadius: 10, border: `1px solid ${TOKEN.border}`,
+        background: TOKEN.glass, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+        position: "relative", color: TOKEN.textSecondary, backdropFilter: "blur(12px)",
+      }}>
+        {Icon.bell}
+        <span style={{ position: "absolute", top: 8, right: 8, width: 6, height: 6, borderRadius: 99, background: TOKEN.orange, boxShadow: `0 0 6px ${TOKEN.orange}` }} />
+      </motion.button>
       <StreakWidget days={streak} />
     </div>
   </div>
@@ -302,39 +262,159 @@ const Topbar = ({ title, streak, notifications, onClearNotification }) => (
 // LANDING PAGE
 // ══════════════════════════════════════════════════════════════════════════════
 const LandingPage = ({ onEnter }) => {
-  return (
-    <div style={{ minHeight: "100vh", background: TOKEN.bg, overflowX: "hidden" }}>
-      <div style={{ position: "fixed", inset: 0, pointerEvents: "none" }}>
-        {[{ x: "10%", y: "20%", c: TOKEN.blue, s: 500 }, { x: "70%", y: "60%", c: TOKEN.cyan, s: 400 }, { x: "50%", y: "10%", c: TOKEN.purple, s: 300 }].map((b, i) => (
-          <motion.div key={i} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 8 + i * 2, repeat: Infinity }}
-            style={{ position: "absolute", left: b.x, top: b.y, width: b.s, height: b.s, borderRadius: "50%", background: b.c, filter: "blur(120px)", opacity: 0.04 }} />
-        ))}
-      </div>
+  const orbs = [
+    { x: "10%", y: "20%", size: 500, color: TOKEN.blue, opacity: 0.04 },
+    { x: "70%", y: "60%", size: 400, color: TOKEN.cyan, opacity: 0.035 },
+    { x: "50%", y: "10%", size: 300, color: TOKEN.purple, opacity: 0.03 },
+  ];
 
-      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, padding: "16px 48px", display: "flex", alignItems: "center", justifyContent: "space-between", backdropFilter: "blur(20px)", borderBottom: `1px solid ${TOKEN.border}`, background: "rgba(5,10,20,0.8)" }}>
+  const features = [
+    { icon: "🧠", title: "IA Adaptativa", desc: "Reorganiza suas prioridades automaticamente com base no seu desempenho" },
+    { icon: "⚡", title: "Revisão Espaçada", desc: "Algoritmo científico que otimiza o momento certo de revisar cada tema" },
+    { icon: "📊", title: "Analytics Premium", desc: "Dashboards inteligentes que mostram exatamente onde você precisa melhorar" },
+    { icon: "🎯", title: "Simulados Inteligentes", desc: "Questões personalizadas baseadas em seu perfil de erros e acertos" },
+    { icon: "🔥", title: "Gamificação", desc: "Sistema de streaks, XP e conquistas para manter sua motivação no máximo" },
+    { icon: "📚", title: "Upload de Aulas", desc: "Importe seus materiais e o sistema organiza tudo automaticamente" },
+  ];
+
+  const stats = [
+    { value: "94%", label: "Taxa de aprovação" },
+    { value: "3.2×", label: "Mais rápido para aprender" },
+    { value: "10k+", label: "Estudantes ativos" },
+    { value: "98%", label: "Satisfação" },
+  ];
+
+  return (
+    <div style={{ minHeight: "100vh", background: TOKEN.bg, fontFamily: "'DM Sans', sans-serif", overflowX: "hidden" }}>
+      {/* Background orbs */}
+      {orbs.map((o, i) => (
+        <motion.div key={i} animate={{ scale: [1, 1.08, 1], opacity: [o.opacity, o.opacity * 1.4, o.opacity] }}
+          transition={{ duration: 8 + i * 2, repeat: Infinity, ease: "easeInOut" }}
+          style={{ position: "fixed", left: o.x, top: o.y, width: o.size, height: o.size, borderRadius: "50%",
+            background: o.color, filter: "blur(120px)", opacity: o.opacity, pointerEvents: "none", zIndex: 0 }}
+        />
+      ))}
+
+      {/* Nav */}
+      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, padding: "16px 48px",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        backdropFilter: "blur(20px)", borderBottom: `1px solid ${TOKEN.border}`,
+        background: "rgba(5,10,20,0.8)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, background: `linear-gradient(135deg, ${TOKEN.blue}, ${TOKEN.cyan})`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} style={{ width: 16, height: 16 }}><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" /><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" /></svg>
+          <div style={{ width: 32, height: 32, borderRadius: 8, background: `linear-gradient(135deg, ${TOKEN.blue}, ${TOKEN.cyan})`,
+            display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 0 16px ${TOKEN.blue}55` }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
+              <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" /><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" />
+            </svg>
           </div>
-          <span style={{ fontSize: 15, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif" }}>MeuEstudo Contábil</span>
+          <span style={{ fontSize: 15, fontWeight: 700, color: TOKEN.textPrimary, letterSpacing: "-0.02em", fontFamily: "'Syne', sans-serif" }}>MeuEstudo Contábil</span>
         </div>
-        <div style={{ display: "flex", gap: 12 }}>
-          <motion.button whileHover={{ scale: 1.03 }} style={{ padding: "8px 20px", borderRadius: 8, border: `1px solid ${TOKEN.border}`, background: "transparent", color: TOKEN.textSecondary, cursor: "pointer", fontSize: 13 }}>Entrar</motion.button>
-          <motion.button whileHover={{ scale: 1.03, boxShadow: `0 0 24px ${TOKEN.blue}66` }} onClick={onEnter} style={{ padding: "8px 20px", borderRadius: 8, border: "none", background: `linear-gradient(135deg, ${TOKEN.blue}, ${TOKEN.cyan})`, color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>Começar grátis →</motion.button>
+        <div style={{ display: "flex", gap: 8 }}>
+          <motion.button whileHover={{ scale: 1.03 }} style={{ padding: "8px 18px", borderRadius: 8, border: `1px solid ${TOKEN.border}`,
+            background: "transparent", color: TOKEN.textSecondary, cursor: "pointer", fontSize: 13, fontFamily: "'DM Sans', sans-serif" }}>
+            Entrar
+          </motion.button>
+          <motion.button whileHover={{ scale: 1.03, boxShadow: `0 0 24px ${TOKEN.blue}66` }} onClick={onEnter}
+            style={{ padding: "8px 18px", borderRadius: 8, border: "none",
+            background: `linear-gradient(135deg, ${TOKEN.blue}, ${TOKEN.cyan})`,
+            color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>
+            Começar grátis →
+          </motion.button>
         </div>
       </nav>
 
+      {/* Hero */}
       <div style={{ position: "relative", zIndex: 1, maxWidth: 900, margin: "0 auto", padding: "160px 48px 100px", textAlign: "center" }}>
-        <motion.h1 initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} style={{ fontSize: "clamp(38px, 6vw, 68px)", fontWeight: 900, lineHeight: 1.05, letterSpacing: "-0.04em", fontFamily: "'Syne', sans-serif", color: TOKEN.textPrimary, margin: "0 0 20px" }}>
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 14px", borderRadius: 99,
+            background: "rgba(56,139,253,0.1)", border: `1px solid rgba(56,139,253,0.25)`, marginBottom: 28 }}>
+            <span style={{ fontSize: 10, color: TOKEN.cyan, fontWeight: 700, letterSpacing: "0.1em" }}>NOVA VERSÃO 2.0</span>
+            <span style={{ fontSize: 11, color: TOKEN.textMuted }}>→ IA ainda mais inteligente</span>
+          </div>
+        </motion.div>
+
+        <motion.h1 initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }}
+          style={{ fontSize: "clamp(38px, 6vw, 68px)", fontWeight: 900, lineHeight: 1.05, letterSpacing: "-0.04em",
+            fontFamily: "'Syne', sans-serif", color: TOKEN.textPrimary, margin: "0 0 20px" }}>
           Seu estudo,{" "}
-          <span style={{ background: `linear-gradient(135deg, ${TOKEN.blue}, ${TOKEN.cyan})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>organizado e otimizado</span> pela IA
+          <span style={{ background: `linear-gradient(135deg, ${TOKEN.blue}, ${TOKEN.cyan})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            organizado e otimizado
+          </span>
+          {" "}pela IA
         </motion.h1>
-        <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} style={{ fontSize: 18, color: TOKEN.textSecondary, lineHeight: 1.6, margin: "0 0 36px", maxWidth: 600, marginLeft: "auto", marginRight: "auto" }}>
+
+        <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}
+          style={{ fontSize: 18, color: TOKEN.textSecondary, lineHeight: 1.6, margin: "0 0 36px", maxWidth: 600, marginLeft: "auto", marginRight: "auto" }}>
           O sistema inteligente que reorganiza suas aulas, aplica revisões no momento certo e acompanha sua evolução em Ciências Contábeis.
         </motion.p>
-        <motion.button whileHover={{ scale: 1.04, boxShadow: `0 0 40px ${TOKEN.blue}55` }} onClick={onEnter} style={{ padding: "14px 32px", borderRadius: 12, border: "none", background: `linear-gradient(135deg, ${TOKEN.blue}, ${TOKEN.cyan})`, color: "#fff", cursor: "pointer", fontSize: 15, fontWeight: 700, boxShadow: `0 0 24px ${TOKEN.blue}44` }}>
-          🚀 Começar gratuitamente
-        </motion.button>
+
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.25 }}
+          style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+          <motion.button whileHover={{ scale: 1.04, boxShadow: `0 0 40px ${TOKEN.blue}55` }} onClick={onEnter}
+            style={{ padding: "14px 32px", borderRadius: 12, border: "none",
+              background: `linear-gradient(135deg, ${TOKEN.blue}, ${TOKEN.cyan})`,
+              color: "#fff", cursor: "pointer", fontSize: 15, fontWeight: 700, fontFamily: "'DM Sans', sans-serif",
+              boxShadow: `0 0 24px ${TOKEN.blue}44` }}>
+            🚀 Começar gratuitamente
+          </motion.button>
+          <motion.button whileHover={{ scale: 1.04 }}
+            style={{ padding: "14px 32px", borderRadius: 12, border: `1px solid ${TOKEN.border}`,
+              background: TOKEN.glass, backdropFilter: "blur(12px)",
+              color: TOKEN.textSecondary, cursor: "pointer", fontSize: 15, fontFamily: "'DM Sans', sans-serif" }}>
+            ▶ Ver demonstração
+          </motion.button>
+        </motion.div>
+
+        {/* Stats */}
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }}
+          style={{ display: "flex", justifyContent: "center", gap: 48, marginTop: 64, flexWrap: "wrap" }}>
+          {stats.map((s, i) => (
+            <div key={i} style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 28, fontWeight: 900, color: TOKEN.blue, fontFamily: "'Syne', sans-serif", letterSpacing: "-0.04em" }}>{s.value}</div>
+              <div style={{ fontSize: 12, color: TOKEN.textMuted, marginTop: 2 }}>{s.label}</div>
+            </div>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Features */}
+      <div style={{ position: "relative", zIndex: 1, maxWidth: 1100, margin: "0 auto", padding: "60px 48px" }}>
+        <div style={{ textAlign: "center", marginBottom: 48 }}>
+          <h2 style={{ fontSize: 36, fontWeight: 800, letterSpacing: "-0.04em", fontFamily: "'Syne', sans-serif", color: TOKEN.textPrimary, margin: "0 0 12px" }}>
+            Tudo que você precisa para passar
+          </h2>
+          <p style={{ fontSize: 16, color: TOKEN.textMuted }}>Desenvolvido com base em ciência do aprendizado e design de produto premium</p>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 16 }}>
+          {features.map((f, i) => (
+            <motion.div key={i} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: i * 0.07 + 0.3 }}
+              whileHover={{ y: -4, boxShadow: `0 20px 60px rgba(56,139,253,0.12)` }}
+              style={{ padding: 24, borderRadius: 16, background: TOKEN.glass, border: `1px solid ${TOKEN.border}`,
+                backdropFilter: "blur(12px)", transition: "all 0.2s" }}>
+              <div style={{ fontSize: 28, marginBottom: 12 }}>{f.icon}</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: TOKEN.textPrimary, marginBottom: 6, fontFamily: "'Syne', sans-serif" }}>{f.title}</div>
+              <div style={{ fontSize: 13, color: TOKEN.textMuted, lineHeight: 1.6 }}>{f.desc}</div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* CTA */}
+      <div style={{ textAlign: "center", padding: "80px 48px 100px", position: "relative", zIndex: 1 }}>
+        <div style={{ display: "inline-block", padding: "48px 64px", borderRadius: 24,
+          background: `linear-gradient(135deg, rgba(56,139,253,0.1), rgba(57,208,216,0.06))`,
+          border: `1px solid rgba(56,139,253,0.2)`, backdropFilter: "blur(20px)" }}>
+          <h2 style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.04em", fontFamily: "'Syne', sans-serif", color: TOKEN.textPrimary, margin: "0 0 12px" }}>
+            Pronto para evoluir?
+          </h2>
+          <p style={{ fontSize: 15, color: TOKEN.textMuted, margin: "0 0 28px" }}>Junte-se a milhares de estudantes que já estão evoluindo com o MeuEstudo</p>
+          <motion.button whileHover={{ scale: 1.05, boxShadow: `0 0 40px ${TOKEN.blue}66` }} onClick={onEnter}
+            style={{ padding: "14px 36px", borderRadius: 12, border: "none",
+              background: `linear-gradient(135deg, ${TOKEN.blue}, ${TOKEN.cyan})`,
+              color: "#fff", cursor: "pointer", fontSize: 15, fontWeight: 700, fontFamily: "'DM Sans', sans-serif" }}>
+            Entrar no Dashboard →
+          </motion.button>
+        </div>
       </div>
     </div>
   );
@@ -343,23 +423,23 @@ const LandingPage = ({ onEnter }) => {
 // ══════════════════════════════════════════════════════════════════════════════
 // DASHBOARD HOME
 // ══════════════════════════════════════════════════════════════════════════════
-const HomeDashboard = ({ userProgress, onUpdateProgress, studyData, onToggleTask, onShowToast }) => {
+const HomeDashboard = ({ userProgress, onUpdateProgress, studyData, onToggleTask }) => {
   const subjects = [
-    { name: "Contabilidade Geral", sub: "Obr. divulgação e publicação", pct: 70, status: "Em andamento", statusColor: "cyan" },
-    { name: "Contabilidade Societária", sub: "Demonstrações (CPC26)", pct: 45, status: "Em andamento", statusColor: "cyan" },
-    { name: "Contabilidade de Custos", sub: "Custeio por absorção", pct: 20, status: "Iniciante", statusColor: "purple" },
+    { name: "Cont. Geral", sub: "Obr. divulgação e publicação", pct: 70, status: "Em andamento", statusColor: "cyan" },
+    { name: "Cont. Societária", sub: "Demonstrações (CPC26)", pct: 40, status: "Próximo", statusColor: "orange" },
+    { name: "Cont. de Custos", sub: "Custeio por absorção", pct: 0, status: "Bloqueado", statusColor: "purple" },
   ];
 
   const upcomingReviews = [
     { id: "review1", topic: "Balanço Patrimonial", due: "Hoje", questions: 10, urgent: true, completed: studyData.completedReviews.includes("review1") },
     { id: "review2", topic: "DRE (CPC 26)", due: "Amanhã", questions: 15, urgent: false, completed: studyData.completedReviews.includes("review2") },
-    { id: "review3", topic: "Fluxo de Caixa", due: "12/06", questions: 8, urgent: false, completed: studyData.completedReviews.includes("review3") },
+    { id: "review3", topic: "Receitas e Despesas", due: "12/06", questions: 10, urgent: false, completed: studyData.completedReviews.includes("review3") },
   ];
 
   const recentAchievements = [
     { icon: "🏆", title: "Primeira semana!", desc: "7 dias de streak", earned: userProgress.streak >= 7 },
-    { icon: "⚡", title: "Velocista", desc: "100 questões respondidas", earned: userProgress.totalQuestions >= 100 },
-    { icon: "🎯", title: "Precisão", desc: "80% de acerto", earned: userProgress.accuracy >= 80 },
+    { icon: "⚡", title: "Velocista", desc: "100 questões em um dia", earned: userProgress.totalQuestions >= 100 },
+    { icon: "🎯", title: "Precisão", desc: "90% de acerto", earned: userProgress.accuracy >= 90 },
   ];
 
   const handleCompleteReview = (reviewId, xpGain = 10) => {
@@ -367,41 +447,37 @@ const HomeDashboard = ({ userProgress, onUpdateProgress, studyData, onToggleTask
       onUpdateProgress({ type: "ADD_XP", value: xpGain });
       onUpdateProgress({ type: "ADD_QUESTION" });
       onToggleTask(reviewId);
-      onShowToast(`✅ Revisão concluída! +${xpGain} XP`, "success");
     }
   };
 
-  const handleStartSuggestedExam = () => {
-    onShowToast("📝 Prova iniciada! Vá até a aba 'Provas & Simulados'", "info");
-  };
-
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-      {/* KPI Cards */}
+    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      {/* Row 1 - KPI cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
         {[
-          { label: "Progresso geral", value: `${Math.round((userProgress.xp / userProgress.maxXp) * 100)}%`, delta: "+5% esta semana", color: TOKEN.blue, icon: "📈" },
-          { label: "Questões hoje", value: `${userProgress.todayQuestions}/${userProgress.dailyGoal}`, delta: `${userProgress.dailyGoal - userProgress.todayQuestions} restantes`, color: TOKEN.cyan, icon: "✅" },
-          { label: "Taxa de acertos", value: `${userProgress.accuracy}%`, delta: `+${userProgress.accuracyChange}% vs semana`, color: TOKEN.green, icon: "🎯" },
-          { label: "Tempo de estudo", value: `${Math.floor(userProgress.studyTime / 60)}h ${userProgress.studyTime % 60}m`, delta: "Hoje", color: TOKEN.purple, icon: "⏱" },
+          { label: "Progresso geral", value: `${Math.round((userProgress.xp / userProgress.maxXp) * 100)}%`, delta: "+5% esta semana", color: TOKEN.blue, icon: "📈", spark: [40, 52, 58, 60, 63, 65, 68] },
+          { label: "Questões hoje", value: `${userProgress.todayQuestions}/${userProgress.dailyGoal}`, delta: `${userProgress.dailyGoal - userProgress.todayQuestions} restantes`, color: TOKEN.cyan, icon: "✅", spark: [5, 10, 15, 16, 20, 22, userProgress.todayQuestions] },
+          { label: "Taxa de acertos", value: `${userProgress.accuracy}%`, delta: `+${userProgress.accuracyChange}% vs semana`, color: TOKEN.green, icon: "🎯", spark: [70, 72, 74, 75, 77, 78, userProgress.accuracy] },
+          { label: "Tempo de estudo", value: `${Math.floor(userProgress.studyTime / 60)}h ${userProgress.studyTime % 60}m`, delta: "Hoje", color: TOKEN.purple, icon: "⏱", spark: [1.2, 2.5, 1.8, 3.2, 2.8, 1.5, 2.2] },
         ].map((k, i) => (
-          <motion.div key={i} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: i * 0.1 }}>
+          <motion.div key={i} initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: i * 0.06 }}>
             <GlassCard glow style={{ padding: "18px 20px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                 <div>
                   <div style={{ fontSize: 11, color: TOKEN.textMuted, fontWeight: 500, letterSpacing: "0.04em", marginBottom: 4 }}>{k.label.toUpperCase()}</div>
-                  <motion.div key={k.value} initial={{ scale: 1.1 }} animate={{ scale: 1 }} style={{ fontSize: 28, fontWeight: 800, color: TOKEN.textPrimary, letterSpacing: "-0.04em", fontFamily: "'Syne', sans-serif", lineHeight: 1 }}>{k.value}</motion.div>
+                  <div style={{ fontSize: 26, fontWeight: 800, color: TOKEN.textPrimary, letterSpacing: "-0.04em", fontFamily: "'Syne', sans-serif", lineHeight: 1 }}>{k.value}</div>
                   <div style={{ fontSize: 11, color: k.color, marginTop: 4, fontWeight: 500 }}>{k.delta}</div>
                 </div>
-                <div style={{ fontSize: 24 }}>{k.icon}</div>
+                <div style={{ fontSize: 20 }}>{k.icon}</div>
               </div>
             </GlassCard>
           </motion.div>
         ))}
       </div>
 
-      {/* Study Plan & Progress */}
+      {/* Row 2 */}
       <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 14 }}>
+        {/* Study plan */}
         <GlassCard style={{ padding: 22 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
             <div>
@@ -410,23 +486,33 @@ const HomeDashboard = ({ userProgress, onUpdateProgress, studyData, onToggleTask
             </div>
             <Badge color="cyan">IA Ativa</Badge>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {subjects.map((s, i) => (
-              <motion.div key={i} initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: i * 0.1 }}
-                whileHover={{ x: 3 }} style={{ padding: "14px 16px", borderRadius: 12, background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKEN.border}`, cursor: "pointer" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+              <motion.div key={i} initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: i * 0.08 + 0.2 }}
+                whileHover={{ x: 3 }} style={{ display: "flex", flexDirection: "column", gap: 8, padding: "14px 16px",
+                  borderRadius: 12, background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKEN.border}`, cursor: "pointer" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 600, color: TOKEN.textPrimary }}>{s.name}</div>
                     <div style={{ fontSize: 11, color: TOKEN.textMuted }}>{s.sub}</div>
                   </div>
-                  <Badge color={s.statusColor}>{s.status}</Badge>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <Badge color={s.statusColor}>{s.status}</Badge>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: TOKEN.blue }}>{s.pct}%</span>
+                  </div>
                 </div>
-                <ProgressBar value={s.pct} color={TOKEN.blue} height={6} />
+                <ProgressBar value={s.pct} color={TOKEN.blue} />
               </motion.div>
             ))}
           </div>
+          <motion.button whileHover={{ x: 4 }} style={{ marginTop: 14, width: "100%", padding: "10px", borderRadius: 10,
+            border: `1px solid ${TOKEN.border}`, background: "transparent", color: TOKEN.blue,
+            cursor: "pointer", fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>
+            Ver todos os temas →
+          </motion.button>
         </GlassCard>
 
+        {/* Disciplines progress */}
         <GlassCard style={{ padding: 22 }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif", marginBottom: 16 }}>📊 Progresso por Disciplina</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -437,61 +523,101 @@ const HomeDashboard = ({ userProgress, onUpdateProgress, studyData, onToggleTask
               { name: "Análise de Balanços", progress: 55, color: TOKEN.green },
               { name: "Auditoria", progress: 30, color: TOKEN.orange },
             ].map((s, i) => (
-              <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.1 }}>
+              <div key={i}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
                   <span style={{ fontSize: 11, color: TOKEN.textMuted }}>{s.name}</span>
                   <span style={{ fontSize: 13, fontWeight: 600, color: s.color }}>{s.progress}%</span>
                 </div>
                 <ProgressBar value={s.progress} color={s.color} height={4} />
-              </motion.div>
+              </div>
             ))}
           </div>
         </GlassCard>
       </div>
 
-      {/* Reviews & Streak */}
+      {/* Row 3 */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 0.8fr", gap: 14 }}>
+        {/* Performance chart */}
         <GlassCard style={{ padding: 22 }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif", marginBottom: 16 }}>📈 Evolução de Acertos</div>
-          <div style={{ display: "flex", gap: 8, alignItems: "flex-end", height: 100 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif", marginBottom: 4 }}>📈 Desempenho Recente</div>
+          <div style={{ fontSize: 11, color: TOKEN.textMuted, marginBottom: 16 }}>Últimos 7 dias</div>
+          <div style={{ display: "flex", gap: 8, alignItems: "flex-end", height: 80 }}>
             {[55, 62, 58, 70, 65, 72, userProgress.accuracy].map((v, i) => (
-              <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-                <motion.div initial={{ height: 0 }} animate={{ height: `${v}%` }} transition={{ delay: i * 0.1, duration: 0.6 }}
-                  style={{ width: "100%", background: i === 6 ? `linear-gradient(180deg, ${TOKEN.blue}, ${TOKEN.cyan})` : "rgba(56,139,253,0.25)", borderRadius: "4px 4px 2px 2px", minHeight: 4 }} />
-                <span style={{ fontSize: 9, color: TOKEN.textMuted }}>{["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"][i]}</span>
+              <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                <motion.div initial={{ height: 0 }} animate={{ height: `${v}%` }}
+                  transition={{ delay: i * 0.06, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  style={{ width: "100%", background: i === 6 ? `linear-gradient(180deg, ${TOKEN.blue}, ${TOKEN.cyan})` : "rgba(56,139,253,0.25)",
+                    borderRadius: "4px 4px 2px 2px", minHeight: 4,
+                    boxShadow: i === 6 ? `0 0 12px ${TOKEN.blue}66` : "none" }}
+                />
+                <span style={{ fontSize: 9, color: TOKEN.textMuted }}>["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"][i]</span>
               </div>
             ))}
           </div>
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 14 }}>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: TOKEN.green, fontFamily: "'Syne', sans-serif" }}>{userProgress.accuracy}%</div>
+              <div style={{ fontSize: 10, color: TOKEN.textMuted }}>Hoje</div>
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif" }}>68%</div>
+              <div style={{ fontSize: 10, color: TOKEN.textMuted }}>Média</div>
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: TOKEN.cyan, fontFamily: "'Syne', sans-serif" }}>+{userProgress.accuracyChange}%</div>
+              <div style={{ fontSize: 10, color: TOKEN.textMuted }}>Evolução</div>
+            </div>
+          </div>
         </GlassCard>
 
+        {/* Upcoming reviews */}
         <GlassCard style={{ padding: 22 }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif", marginBottom: 16 }}>📅 Próximas Revisões</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {upcomingReviews.map((r, i) => (
-              <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.1 }}
-                whileHover={{ x: 2 }} onClick={() => handleCompleteReview(r.id)} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 12px", borderRadius: 10, background: r.completed ? "rgba(34,197,94,0.08)" : (r.urgent ? "rgba(249,115,22,0.08)" : "rgba(255,255,255,0.025)"), border: `1px solid ${r.completed ? "rgba(34,197,94,0.3)" : (r.urgent ? "rgba(249,115,22,0.2)" : TOKEN.border)}`, cursor: "pointer", opacity: r.completed ? 0.6 : 1 }}>
-                <div style={{ fontSize: 20 }}>{r.completed ? "✅" : (r.urgent ? "🔴" : "📘")}</div>
+              <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.08 }}
+                whileHover={{ x: 2 }} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 12px",
+                  borderRadius: 10, background: r.completed ? "rgba(34,197,94,0.08)" : (r.urgent ? "rgba(249,115,22,0.08)" : "rgba(255,255,255,0.025)"),
+                  border: `1px solid ${r.completed ? "rgba(34,197,94,0.3)" : (r.urgent ? "rgba(249,115,22,0.2)" : TOKEN.border)}`,
+                  cursor: "pointer", opacity: r.completed ? 0.6 : 1 }}>
+                <div onClick={() => handleCompleteReview(r.id)} style={{ width: 36, height: 36, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center",
+                  background: r.urgent ? "rgba(249,115,22,0.15)" : "rgba(56,139,253,0.1)", fontSize: 16 }}>
+                  {r.completed ? "✅" : (r.urgent ? "🔴" : "📘")}
+                </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: TOKEN.textPrimary }}>{r.topic}</div>
                   <div style={{ fontSize: 10, color: TOKEN.textMuted }}>{r.questions} questões</div>
                 </div>
-                <Badge color={r.completed ? "green" : (r.urgent ? "orange" : "blue")}>{r.completed ? "Concluído" : r.due}</Badge>
+                <Badge color={r.completed ? "green" : (r.urgent ? "orange" : "blue")}>
+                  {r.completed ? "Concluído" : r.due}
+                </Badge>
               </motion.div>
             ))}
           </div>
+          <motion.button whileHover={{ scale: 1.02, boxShadow: `0 0 20px ${TOKEN.blue}44` }} style={{
+            marginTop: 14, width: "100%", padding: "10px", borderRadius: 10, border: "none",
+            background: `linear-gradient(135deg, ${TOKEN.blue}, ${TOKEN.cyan})`,
+            color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 700, fontFamily: "'DM Sans', sans-serif" }}>
+            ▶ Iniciar revisão de hoje
+          </motion.button>
         </GlassCard>
 
+        {/* Streak */}
         <GlassCard style={{ padding: 22 }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif", marginBottom: 4 }}>🔥 Sequência</div>
           <div style={{ fontSize: 11, color: TOKEN.textMuted, marginBottom: 14 }}>Dias consecutivos estudando</div>
           <div style={{ display: "flex", justifyContent: "center", padding: "20px 0" }}>
             <StreakWidget days={userProgress.streak} />
           </div>
+          <div style={{ marginTop: 16, padding: "10px 0", borderTop: `1px solid ${TOKEN.border}`, textAlign: "center" }}>
+            <div style={{ fontSize: 11, color: TOKEN.textMuted }}>Próxima conquista: {userProgress.streak >= 7 ? "30 dias" : "7 dias"}</div>
+          </div>
         </GlassCard>
       </div>
 
-      {/* Suggested Exam & Achievements */}
+      {/* Row 4 — Suggested exam + Achievements */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+        {/* Suggested exam */}
         <GlassCard style={{ padding: 22 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <div style={{ fontSize: 14, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif" }}>🎯 Prova Sugerida para Hoje</div>
@@ -501,270 +627,169 @@ const HomeDashboard = ({ userProgress, onUpdateProgress, studyData, onToggleTask
             <div style={{ fontSize: 15, fontWeight: 700, color: TOKEN.textPrimary, marginBottom: 4 }}>Balanço Patrimonial</div>
             <div style={{ fontSize: 12, color: TOKEN.textMuted, marginBottom: 12 }}>Tema: Obr. divulgação e publicação (CPC 26)</div>
             <div style={{ display: "flex", gap: 16, marginBottom: 14 }}>
-              <Badge color="orange">Médio</Badge>
-              <span style={{ fontSize: 11, color: TOKEN.textSecondary }}>⏱ ~15 min</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                <span style={{ fontSize: 11, color: TOKEN.textMuted }}>Nível:</span>
+                <Badge color="orange">Médio</Badge>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                <span style={{ fontSize: 11, color: TOKEN.textMuted }}>⏱</span>
+                <span style={{ fontSize: 11, color: TOKEN.textSecondary }}>~15 min</span>
+              </div>
             </div>
-            <motion.button onClick={handleStartSuggestedExam} whileHover={{ scale: 1.02, boxShadow: `0 0 24px ${TOKEN.blue}55` }}
-              style={{ width: "100%", padding: "11px", borderRadius: 10, border: "none", background: `linear-gradient(135deg, ${TOKEN.blue}, ${TOKEN.cyan})`, color: "#fff", cursor: "pointer", fontSize: 14, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            <motion.button whileHover={{ scale: 1.02, boxShadow: `0 0 24px ${TOKEN.blue}55` }}
+              style={{ width: "100%", padding: "11px", borderRadius: 10, border: "none",
+                background: `linear-gradient(135deg, ${TOKEN.blue}, ${TOKEN.cyan})`,
+                color: "#fff", cursor: "pointer", fontSize: 14, fontWeight: 700, fontFamily: "'DM Sans', sans-serif",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
               {Icon.play} Iniciar Prova
             </motion.button>
           </div>
         </GlassCard>
 
+        {/* Achievements */}
         <GlassCard style={{ padding: 22 }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif", marginBottom: 16 }}>🏅 Conquistas Recentes</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {recentAchievements.map((a, i) => (
               <motion.div key={i} initial={{ x: 10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: i * 0.1 }}
-                whileHover={{ x: 3 }} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 14px", borderRadius: 10, background: a.earned ? "rgba(34,197,94,0.08)" : "rgba(255,255,255,0.03)", border: `1px solid ${a.earned ? "rgba(34,197,94,0.3)" : TOKEN.border}`, opacity: a.earned ? 1 : 0.5 }}>
-                <div style={{ fontSize: 28 }}>{a.icon}</div>
+                whileHover={{ x: 3 }} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 14px",
+                  borderRadius: 10, background: a.earned ? "rgba(34,197,94,0.08)" : "rgba(255,255,255,0.03)", 
+                  border: `1px solid ${a.earned ? "rgba(34,197,94,0.3)" : TOKEN.border}`, cursor: "pointer",
+                  opacity: a.earned ? 1 : 0.5 }}>
+                <div style={{ fontSize: 24, filter: a.earned ? "drop-shadow(0 0 8px rgba(255,200,0,0.4))" : "none" }}>{a.icon}</div>
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 600, color: TOKEN.textPrimary }}>{a.title}</div>
                   <div style={{ fontSize: 11, color: TOKEN.textMuted }}>{a.desc}</div>
                 </div>
-                {a.earned && <div style={{ marginLeft: "auto", color: TOKEN.orange }}>{Icon.star}</div>}
+                <div style={{ marginLeft: "auto", color: a.earned ? TOKEN.orange : TOKEN.textMuted }}>{Icon.star}</div>
               </motion.div>
             ))}
           </div>
           <div style={{ marginTop: 14, padding: "12px 14px", borderRadius: 10, background: "rgba(168,85,247,0.08)", border: `1px solid rgba(168,85,247,0.15)` }}>
             <XPBar level={userProgress.level} xp={userProgress.xp} maxXp={userProgress.maxXp} />
-            <div style={{ fontSize: 11, color: TOKEN.textMuted, marginTop: 8, textAlign: "center" }}>{userProgress.maxXp - userProgress.xp} XP para o próximo nível</div>
+            <div style={{ fontSize: 11, color: TOKEN.textMuted, marginTop: 8, textAlign: "center" }}>
+              {userProgress.maxXp - userProgress.xp} XP para o próximo nível
+            </div>
           </div>
         </GlassCard>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SUBJECTS PAGE
 // ══════════════════════════════════════════════════════════════════════════════
-const SubjectsPage = ({ onUpdateProgress, onShowToast }) => {
-  const [subjects, setSubjects] = useState([
+const SubjectsPage = ({ subjectsProgress, onUpdateProgress }) => {
+  const subjectsList = [
     { id: "cont_geral", name: "Contabilidade Geral", icon: "📒", pct: 70, topics: 12, done: 8, color: TOKEN.blue, level: "Intermediário" },
     { id: "cont_soc", name: "Contabilidade Societária", icon: "🏦", pct: 45, topics: 9, done: 4, color: TOKEN.cyan, level: "Avançado" },
     { id: "cont_custos", name: "Contabilidade de Custos", icon: "💹", pct: 20, topics: 8, done: 2, color: TOKEN.purple, level: "Iniciante" },
     { id: "analise_bal", name: "Análise de Balanços", icon: "📊", pct: 55, topics: 7, done: 4, color: TOKEN.green, level: "Intermediário" },
     { id: "auditoria", name: "Auditoria", icon: "🔎", pct: 30, topics: 10, done: 3, color: TOKEN.orange, level: "Iniciante" },
     { id: "dir_trib", name: "Direito Tributário", icon: "⚖️", pct: 10, topics: 6, done: 1, color: TOKEN.red, level: "Iniciante" },
-  ]);
+  ];
 
-  const handleStudy = (subjectId, subjectName) => {
-    onUpdateProgress({ type: "ADD_XP", value: 15 });
+  const handleStudy = (subjectId, xpGain = 15) => {
+    onUpdateProgress({ type: "ADD_XP", value: xpGain });
     onUpdateProgress({ type: "ADD_STUDY_TIME", value: 30 });
     onUpdateProgress({ type: "ADD_QUESTION" });
-    onShowToast(`📚 Estudando ${subjectName}! +15 XP`, "success");
-    
-    setSubjects(prev => prev.map(s => 
-      s.id === subjectId && s.pct < 100 
-        ? { ...s, pct: Math.min(100, s.pct + 2), done: Math.min(s.topics, Math.floor((s.pct + 2) / 100 * s.topics)) }
-        : s
-    ));
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
-      {subjects.map((s, i) => (
-        <motion.div key={i} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: i * 0.07 }}>
-          <GlassCard style={{ padding: 22, cursor: "pointer" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <div style={{ width: 48, height: 48, borderRadius: 12, background: `${s.color}22`, border: `1px solid ${s.color}44`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>{s.icon}</div>
-                <div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif" }}>{s.name}</div>
-                  <div style={{ fontSize: 11, color: TOKEN.textMuted }}>{s.done}/{s.topics} temas</div>
+    <div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
+        {subjectsList.map((s, i) => (
+          <motion.div key={i} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: i * 0.07 }}>
+            <GlassCard style={{ padding: 22, cursor: "pointer" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ width: 42, height: 42, borderRadius: 12, background: `${s.color}22`, border: `1px solid ${s.color}44`,
+                    display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>{s.icon}</div>
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif" }}>{s.name}</div>
+                    <div style={{ fontSize: 11, color: TOKEN.textMuted }}>{s.done}/{s.topics} temas concluídos</div>
+                  </div>
                 </div>
+                <Badge color={s.pct > 60 ? "green" : s.pct > 30 ? "orange" : "purple"}>{s.level}</Badge>
               </div>
-              <Badge color={s.pct > 60 ? "green" : s.pct > 30 ? "orange" : "purple"}>{s.level}</Badge>
-            </div>
-            <div style={{ marginBottom: 14 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                <span style={{ fontSize: 11, color: TOKEN.textMuted }}>Progresso</span>
-                <span style={{ fontSize: 14, fontWeight: 700, color: s.color }}>{s.pct}%</span>
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                  <span style={{ fontSize: 11, color: TOKEN.textMuted }}>Progresso</span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: s.color }}>{s.pct}%</span>
+                </div>
+                <ProgressBar value={s.pct} color={s.color} height={6} />
               </div>
-              <ProgressBar value={s.pct} color={s.color} height={7} />
-            </div>
-            <motion.button onClick={() => handleStudy(s.id, s.name)} whileHover={{ scale: 1.02 }} style={{ width: "100%", padding: "10px", borderRadius: 8, border: `1px solid ${s.color}44`, background: `${s.color}11`, color: s.color, cursor: "pointer", fontSize: 13, fontWeight: 600 }}>
-              {s.pct >= 100 ? "✅ Concluído" : "Continuar estudando →"}
-            </motion.button>
-          </GlassCard>
-        </motion.div>
-      ))}
-    </motion.div>
-  );
-};
-
-// ══════════════════════════════════════════════════════════════════════════════
-// MATERIALS PAGE - Upload de PDF Funcional
-// ══════════════════════════════════════════════════════════════════════════════
-const MaterialsPage = ({ onShowToast, uploadedMaterials, onAddMaterial, onRemoveMaterial }) => {
-  const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef(null);
-
-  const handleFileUpload = (files) => {
-    const validFiles = Array.from(files).filter(file => {
-      const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
-      const isValidType = validTypes.includes(file.type) || file.name.endsWith('.pdf') || file.name.endsWith('.docx') || file.name.endsWith('.pptx');
-      const isValidSize = file.size <= 50 * 1024 * 1024;
-      
-      if (!isValidType) onShowToast(`❌ ${file.name}: formato não suportado`, "error");
-      else if (!isValidSize) onShowToast(`❌ ${file.name}: arquivo muito grande (max 50MB)`, "error");
-      else return true;
-      return false;
-    });
-
-    validFiles.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const newMaterial = {
-          id: Date.now() + Math.random(),
-          name: file.name,
-          type: file.type,
-          size: (file.size / 1024 / 1024).toFixed(2),
-          date: new Date().toLocaleDateString('pt-BR'),
-          data: e.target.result,
-        };
-        onAddMaterial(newMaterial);
-        onShowToast(`✅ ${file.name} enviado com sucesso!`, "success");
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const files = e.dataTransfer.files;
-    if (files.length > 0) handleFileUpload(files);
-  };
-
-  const handleDownload = (material) => {
-    const link = document.createElement('a');
-    link.href = material.data;
-    link.download = material.name;
-    link.click();
-    onShowToast(`📥 Baixando ${material.name}`, "success");
-  };
-
-  return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: 20 }}>
-      {/* Upload Area */}
-      <GlassCard style={{ padding: 24 }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif", marginBottom: 8 }}>📤 Upload de Materiais</div>
-        <div style={{ fontSize: 12, color: TOKEN.textMuted, marginBottom: 20 }}>Envie PDFs, apresentações e documentos das suas aulas</div>
-        
-        <motion.div
-          onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-          onDragLeave={() => setIsDragging(false)}
-          onDrop={handleDrop}
-          animate={{ borderColor: isDragging ? TOKEN.blue : TOKEN.border, scale: isDragging ? 1.02 : 1 }}
-          style={{ border: `2px dashed ${isDragging ? TOKEN.blue : TOKEN.border}`, borderRadius: 16, padding: "40px 24px", textAlign: "center", cursor: "pointer", transition: "all 0.2s", background: isDragging ? "rgba(56,139,253,0.05)" : "transparent" }}
-        >
-          <div style={{ fontSize: 48, marginBottom: 12 }}>📁</div>
-          <div style={{ fontSize: 14, color: TOKEN.textSecondary, fontWeight: 500, marginBottom: 6 }}>Arraste seus arquivos aqui</div>
-          <div style={{ fontSize: 12, color: TOKEN.textMuted, marginBottom: 16 }}>PDF, DOCX, PPTX • Máx 50MB</div>
-          <input type="file" ref={fileInputRef} accept=".pdf,.docx,.pptx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation" multiple style={{ display: "none" }} onChange={(e) => handleFileUpload(e.target.files)} />
-          <motion.button onClick={() => fileInputRef.current?.click()} whileHover={{ scale: 1.03 }} style={{ padding: "10px 24px", borderRadius: 10, border: `1px solid ${TOKEN.border}`, background: "rgba(56,139,253,0.1)", color: TOKEN.blue, cursor: "pointer", fontSize: 13, fontWeight: 600 }}>
-            Selecionar arquivos
-          </motion.button>
-        </motion.div>
-
-        <div style={{ marginTop: 20, padding: "12px", borderRadius: 10, background: "rgba(56,139,253,0.05)", border: `1px solid ${TOKEN.border}` }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: TOKEN.textSecondary, marginBottom: 8 }}>📌 Formatos suportados:</div>
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-            <Badge color="blue">PDF</Badge>
-            <Badge color="cyan">DOCX</Badge>
-            <Badge color="purple">PPTX</Badge>
-          </div>
-          <div style={{ fontSize: 11, color: TOKEN.textMuted, marginTop: 10 }}>✓ Armazenamento seguro na nuvem</div>
-          <div style={{ fontSize: 11, color: TOKEN.textMuted }}>✓ Acesso de qualquer dispositivo</div>
-        </div>
-      </GlassCard>
-
-      {/* Materials List */}
-      <GlassCard style={{ padding: 24 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-          <div style={{ fontSize: 16, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif" }}>📚 Meus Materiais</div>
-          <Badge color="cyan">{uploadedMaterials.length} arquivos</Badge>
-        </div>
-        
-        {uploadedMaterials.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "60px 20px" }}>
-            <div style={{ fontSize: 48, marginBottom: 12, opacity: 0.5 }}>📭</div>
-            <div style={{ fontSize: 14, color: TOKEN.textMuted }}>Nenhum material enviado ainda</div>
-            <div style={{ fontSize: 12, color: TOKEN.textMuted, marginTop: 4 }}>Envie seus primeiros arquivos acima</div>
-          </div>
-        ) : (
-          <AnimatePresence>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, maxHeight: 500, overflowY: "auto" }}>
-              {uploadedMaterials.map((material, i) => (
-                <motion.div
-                  key={material.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ delay: i * 0.05 }}
-                  whileHover={{ scale: 1.01 }}
-                  style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 16px", borderRadius: 12, background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKEN.border}` }}
-                >
-                  <div style={{ fontSize: 28 }}>{material.type.includes('pdf') ? "📕" : material.type.includes('word') ? "📘" : "📙"}</div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: TOKEN.textPrimary, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{material.name}</div>
-                    <div style={{ fontSize: 10, color: TOKEN.textMuted }}>{material.size} MB • {material.date}</div>
-                  </div>
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <motion.button whileHover={{ scale: 1.1 }} onClick={() => handleDownload(material)} style={{ padding: "6px", borderRadius: 6, border: `1px solid ${TOKEN.border}`, background: "rgba(56,139,253,0.1)", color: TOKEN.blue, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      {Icon.download}
-                    </motion.button>
-                    <motion.button whileHover={{ scale: 1.1 }} onClick={() => onRemoveMaterial(material.id)} style={{ padding: "6px", borderRadius: 6, border: `1px solid ${TOKEN.border}`, background: "rgba(239,68,68,0.1)", color: TOKEN.red, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      {Icon.trash}
-                    </motion.button>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </AnimatePresence>
-        )}
-      </GlassCard>
-    </motion.div>
+              <motion.button onClick={() => handleStudy(s.id)} whileHover={{ scale: 1.02 }} style={{ width: "100%", padding: "9px", borderRadius: 8, border: `1px solid ${s.color}44`,
+                background: `${s.color}11`, color: s.color, cursor: "pointer", fontSize: 12, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>
+                Continuar estudando →
+              </motion.button>
+            </GlassCard>
+          </motion.div>
+        ))}
+      </div>
+    </div>
   );
 };
 
 // ══════════════════════════════════════════════════════════════════════════════
 // EXAMS PAGE
 // ══════════════════════════════════════════════════════════════════════════════
-const ExamsPage = ({ onUpdateProgress, onShowToast }) => {
-  const [currentExamIndex, setCurrentExamIndex] = useState(null);
+const ExamsPage = ({ onUpdateProgress }) => {
+  const [currentExamIndex, setCurrentExamIndex] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [examCompleted, setExamCompleted] = useState(false);
+  const [examStarted, setExamStarted] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
 
   const exams = [
-    { id: "exam1", title: "Balanço Patrimonial", subject: "Cont. Geral", level: "Médio", color: TOKEN.blue, questions: generateQuestions("BP") },
-    { id: "exam2", title: "DRE e CPC 26", subject: "Cont. Societária", level: "Difícil", color: TOKEN.cyan, questions: generateQuestions("DRE") },
-    { id: "exam3", title: "Custeio por Absorção", subject: "Cont. de Custos", level: "Fácil", color: TOKEN.purple, questions: generateQuestions("CUSTOS") },
+    { id: "exam1", title: "Balanço Patrimonial", subject: "Cont. Geral", questions: 10, time: "15 min", level: "Médio", color: TOKEN.blue, questionsList: generateQuestions("BP") },
+    { id: "exam2", title: "DRE e CPC 26", subject: "Cont. Societária", questions: 15, time: "20 min", level: "Difícil", color: TOKEN.cyan, questionsList: generateQuestions("DRE") },
+    { id: "exam3", title: "Custeio por Absorção", subject: "Cont. de Custos", questions: 8, time: "12 min", level: "Fácil", color: TOKEN.purple, questionsList: generateQuestions("CUSTOS") },
   ];
 
   function generateQuestions(type) {
-    const questions = {
-      BP: [
-        { text: "O que representa o Ativo no Balanço Patrimonial?", options: [{ id: "A", text: "As obrigações da empresa com terceiros" }, { id: "B", text: "Os bens e direitos da empresa" }, { id: "C", text: "O patrimônio líquido da empresa" }, { id: "D", text: "As despesas do período" }], correct: "B", explanation: "O Ativo representa todos os bens e direitos que a empresa possui." },
-        { text: "Qual a fórmula do Patrimônio Líquido?", options: [{ id: "A", text: "Ativo + Passivo" }, { id: "B", text: "Ativo - Passivo" }, { id: "C", text: "Receitas - Despesas" }, { id: "D", text: "Passivo - Ativo" }], correct: "B", explanation: "PL = Ativo - Passivo" },
-      ],
-      DRE: [
-        { text: "A Demonstração do Resultado do Exercício (DRE) evidencia:", options: [{ id: "A", text: "A posição financeira da empresa" }, { id: "B", text: "O desempenho econômico da entidade" }, { id: "C", text: "As mutações do patrimônio líquido" }, { id: "D", text: "Os fluxos de caixa" }], correct: "B", explanation: "A DRE evidencia o desempenho econômico." },
-        { text: "O que é EBITDA?", options: [{ id: "A", text: "Lucro antes de juros, impostos, depreciação e amortização" }, { id: "B", text: "Lucro líquido do período" }, { id: "C", text: "Resultado operacional" }, { id: "D", text: "Margem bruta" }], correct: "A", explanation: "EBITDA = Lucro antes de juros, impostos, depreciação e amortização." },
-      ],
-      CUSTOS: [
-        { text: "O que caracteriza o custeio por absorção?", options: [{ id: "A", text: "Apropria apenas custos variáveis" }, { id: "B", text: "Apropria todos os custos de produção" }, { id: "C", text: "Apropria apenas custos fixos" }, { id: "D", text: "Não apropria custos indiretos" }], correct: "B", explanation: "O custeio por absorção apropria todos os custos de produção." },
-      ],
+    const baseQuestions = {
+      BP: {
+        text: "O que representa o Ativo no Balanço Patrimonial?",
+        options: [
+          { id: "A", text: "As obrigações da empresa com terceiros" },
+          { id: "B", text: "Os bens e direitos da empresa" },
+          { id: "C", text: "O patrimônio líquido da empresa" },
+          { id: "D", text: "As despesas do período" },
+        ],
+        correct: "B",
+        explanation: "O Ativo representa todos os bens e direitos que a empresa possui, gerando benefícios econômicos futuros."
+      },
+      DRE: {
+        text: "A Demonstração do Resultado do Exercício (DRE) evidencia:",
+        options: [
+          { id: "A", text: "A posição financeira da empresa em determinada data" },
+          { id: "B", text: "O desempenho econômico da entidade em um período" },
+          { id: "C", text: "As mutações do patrimônio líquido" },
+          { id: "D", text: "Os fluxos de caixa da empresa" },
+        ],
+        correct: "B",
+        explanation: "A DRE evidencia o desempenho econômico da entidade em um determinado período, apresentando receitas, custos, despesas e o resultado (lucro ou prejuízo)."
+      },
+      CUSTOS: {
+        text: "O que caracteriza o custeio por absorção?",
+        options: [
+          { id: "A", text: "Apropria apenas custos variáveis aos produtos" },
+          { id: "B", text: "Apropria todos os custos de produção aos produtos" },
+          { id: "C", text: "Apropria apenas custos fixos aos produtos" },
+          { id: "D", text: "Não apropria custos indiretos aos produtos" },
+        ],
+        correct: "B",
+        explanation: "O custeio por absorção apropria todos os custos de produção (fixos e variáveis) aos produtos fabricados."
+      }
     };
-    return questions[type] || questions.BP;
+    return [baseQuestions[type] || baseQuestions.BP];
   }
 
-  const currentExam = currentExamIndex !== null ? exams[currentExamIndex] : null;
-  const currentQuestions = currentExam?.questions || [];
+  const currentExam = exams[currentExamIndex];
+  const currentQuestions = currentExam?.questionsList || [];
   const currentQuestion = currentQuestions[currentQuestionIndex];
   const currentAnswer = answers[`${currentExamIndex}_${currentQuestionIndex}`];
 
@@ -773,8 +798,8 @@ const ExamsPage = ({ onUpdateProgress, onShowToast }) => {
     setCurrentQuestionIndex(0);
     setAnswers({});
     setExamCompleted(false);
+    setExamStarted(true);
     setShowExplanation(false);
-    onShowToast(`📝 Iniciando ${exams[index].title}`, "info");
   };
 
   const handleAnswer = (questionIdx, answerId) => {
@@ -786,10 +811,8 @@ const ExamsPage = ({ onUpdateProgress, onShowToast }) => {
     if (isCorrect) {
       onUpdateProgress({ type: "ADD_XP", value: 10 });
       onUpdateProgress({ type: "ADD_CORRECT_ANSWER" });
-      onShowToast(`✅ Correto! +10 XP`, "success");
     } else {
       onUpdateProgress({ type: "ADD_WRONG_ANSWER" });
-      onShowToast(`❌ Incorreto. A resposta correta era ${currentQuestion.correct}`, "error");
     }
     onUpdateProgress({ type: "ADD_QUESTION" });
   };
@@ -799,45 +822,53 @@ const ExamsPage = ({ onUpdateProgress, onShowToast }) => {
     if (currentQuestionIndex + 1 < currentQuestions.length) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      const correct = Object.values(answers).filter(a => a && a.isCorrect).length;
-      const total = currentQuestions.length;
-      const percentage = (correct / total) * 100;
-      onUpdateProgress({ type: "ADD_XP", value: 50 });
-      onShowToast(`🏆 Prova concluída! ${correct}/${total} acertos. +50 XP`, "success");
       setExamCompleted(true);
-      setCurrentExamIndex(null);
+      setExamStarted(false);
+      onUpdateProgress({ type: "ADD_XP", value: 50 });
     }
   };
 
-  if (currentExam && currentQuestion) {
+  const getScore = () => {
+    const answered = Object.values(answers).filter(a => a).length;
+    const correct = Object.values(answers).filter(a => a && a.isCorrect).length;
+    return { answered, correct, percentage: answered > 0 ? (correct / answered) * 100 : 0 };
+  };
+
+  if (examStarted && currentQuestion) {
+    const score = getScore();
     return (
       <GlassCard style={{ padding: 24 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
           <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: TOKEN.textPrimary }}>{currentExam.title}</div>
-            <div style={{ fontSize: 12, color: TOKEN.textMuted }}>Questão {currentQuestionIndex + 1} de {currentQuestions.length}</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif" }}>{currentExam.title}</div>
+            <div style={{ fontSize: 11, color: TOKEN.textMuted, marginTop: 2 }}>Questão {currentQuestionIndex + 1} de {currentQuestions.length}</div>
           </div>
-          <Badge color={currentExam.level === "Difícil" ? "orange" : currentExam.level === "Médio" ? "cyan" : "green"}>{currentExam.level}</Badge>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: TOKEN.green }}>✅ {score.correct}</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: TOKEN.red }}>❌ {score.answered - score.correct}</div>
+          </div>
         </div>
-        <ProgressBar value={((currentQuestionIndex + (currentAnswer ? 1 : 0)) / currentQuestions.length) * 100} color={currentExam.color} height={4} />
+        <ProgressBar value={((currentQuestionIndex + (currentAnswer ? 1 : 0)) / currentQuestions.length) * 100} color={TOKEN.blue} height={4} />
         
-        <div style={{ marginTop: 24, marginBottom: 24, padding: "20px", borderRadius: 12, background: "rgba(56,139,253,0.06)", border: `1px solid rgba(56,139,253,0.12)` }}>
-          <div style={{ fontSize: 12, color: TOKEN.blue, fontWeight: 600, marginBottom: 10 }}>ENUNCIADO</div>
-          <div style={{ fontSize: 15, color: TOKEN.textPrimary, lineHeight: 1.7 }}>{currentQuestion.text}</div>
+        <div style={{ marginTop: 20, marginBottom: 20, padding: "16px", borderRadius: 12, background: "rgba(56,139,253,0.06)", border: `1px solid rgba(56,139,253,0.12)` }}>
+          <div style={{ fontSize: 11, color: TOKEN.blue, fontWeight: 600, marginBottom: 8, letterSpacing: "0.04em" }}>ENUNCIADO</div>
+          <div style={{ fontSize: 14, color: TOKEN.textPrimary, lineHeight: 1.7, fontFamily: "'DM Sans', sans-serif" }}>{currentQuestion.text}</div>
         </div>
         
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {currentQuestion.options.map((opt) => {
             const isSelected = currentAnswer?.answer === opt.id;
             const isCorrect = opt.id === currentQuestion.correct;
-            let bg = "rgba(255,255,255,0.025)", border = TOKEN.border, textColor = TOKEN.textSecondary;
-            if (currentAnswer && isCorrect) { bg = "rgba(34,197,94,0.12)"; border = "rgba(34,197,94,0.4)"; textColor = TOKEN.green; }
-            else if (currentAnswer && isSelected && !isCorrect) { bg = "rgba(239,68,68,0.12)"; border = "rgba(239,68,68,0.4)"; textColor = TOKEN.red; }
-            else if (isSelected) { bg = "rgba(56,139,253,0.15)"; border = TOKEN.blue; textColor = TOKEN.blue; }
+            let bg = "rgba(255,255,255,0.025)", border = TOKEN.border, color = TOKEN.textSecondary;
+            if (currentAnswer && isCorrect) { bg = "rgba(34,197,94,0.12)"; border = "rgba(34,197,94,0.4)"; color = TOKEN.green; }
+            else if (currentAnswer && isSelected && !isCorrect) { bg = "rgba(239,68,68,0.12)"; border = "rgba(239,68,68,0.4)"; color = TOKEN.red; }
+            else if (isSelected) { bg = "rgba(56,139,253,0.15)"; border = TOKEN.blue; color = TOKEN.blue; }
             return (
               <motion.button key={opt.id} onClick={() => handleAnswer(currentQuestionIndex, opt.id)} whileHover={!currentAnswer ? { x: 3 } : {}}
-                style={{ padding: "14px 18px", borderRadius: 10, border: `1px solid ${border}`, background: bg, color: textColor, cursor: currentAnswer ? "default" : "pointer", fontSize: 13, textAlign: "left", display: "flex", alignItems: "center", gap: 12 }}>
-                <span style={{ width: 26, height: 26, borderRadius: 6, border: `1px solid currentColor`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700 }}>{opt.id}</span>
+                style={{ padding: "12px 16px", borderRadius: 10, border: `1px solid ${border}`, background: bg,
+                  color, cursor: currentAnswer ? "default" : "pointer", fontSize: 13, textAlign: "left", transition: "all 0.2s",
+                  display: "flex", alignItems: "center", gap: 12, fontFamily: "'DM Sans', sans-serif" }}>
+                <span style={{ width: 22, height: 22, borderRadius: 6, border: `1px solid currentColor`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{opt.id}</span>
                 <span>{opt.text}</span>
                 {currentAnswer && isCorrect && <span style={{ marginLeft: "auto" }}>✅</span>}
                 {currentAnswer && isSelected && !isCorrect && <span style={{ marginLeft: "auto" }}>❌</span>}
@@ -849,9 +880,9 @@ const ExamsPage = ({ onUpdateProgress, onShowToast }) => {
         <AnimatePresence>
           {showExplanation && currentAnswer && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-              style={{ marginTop: 16, padding: "14px 16px", borderRadius: 10, background: currentAnswer.isCorrect ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)", border: `1px solid ${currentAnswer.isCorrect ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}` }}>
+              style={{ marginTop: 14, padding: "14px 16px", borderRadius: 10, background: currentAnswer.isCorrect ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)", border: `1px solid ${currentAnswer.isCorrect ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}` }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: currentAnswer.isCorrect ? TOKEN.green : TOKEN.red, marginBottom: 6 }}>
-                {currentAnswer.isCorrect ? "✅ Correto!" : "❌ Incorreto"}
+                {currentAnswer.isCorrect ? "✅ Correto! +10 XP" : "❌ Incorreto"}
               </div>
               <div style={{ fontSize: 12, color: TOKEN.textSecondary, lineHeight: 1.6 }}>{currentQuestion.explanation}</div>
             </motion.div>
@@ -859,7 +890,10 @@ const ExamsPage = ({ onUpdateProgress, onShowToast }) => {
         </AnimatePresence>
         
         {currentAnswer && (
-          <motion.button onClick={handleNextQuestion} whileHover={{ scale: 1.02 }} style={{ marginTop: 16, width: "100%", padding: "14px", borderRadius: 10, border: "none", background: `linear-gradient(135deg, ${currentExam.color}, ${currentExam.color}cc)`, color: "#fff", cursor: "pointer", fontSize: 14, fontWeight: 700 }}>
+          <motion.button onClick={handleNextQuestion} whileHover={{ scale: 1.02, boxShadow: `0 0 20px ${TOKEN.blue}44` }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            style={{ marginTop: 14, width: "100%", padding: "12px", borderRadius: 10, border: "none",
+              background: `linear-gradient(135deg, ${TOKEN.blue}, ${TOKEN.cyan})`,
+              color: "#fff", cursor: "pointer", fontSize: 14, fontWeight: 700, fontFamily: "'DM Sans', sans-serif" }}>
             {currentQuestionIndex + 1 === currentQuestions.length ? "Finalizar prova →" : "Próxima questão →"}
           </motion.button>
         )}
@@ -868,11 +902,20 @@ const ExamsPage = ({ onUpdateProgress, onShowToast }) => {
   }
 
   if (examCompleted) {
+    const score = getScore();
     return (
-      <GlassCard style={{ padding: 40, textAlign: "center" }}>
-        <div style={{ fontSize: 64, marginBottom: 20 }}>🏆</div>
-        <div style={{ fontSize: 24, fontWeight: 800, color: TOKEN.textPrimary, marginBottom: 10 }}>Prova Concluída!</div>
-        <motion.button onClick={() => setExamCompleted(false)} whileHover={{ scale: 1.02 }} style={{ marginTop: 20, padding: "12px 32px", borderRadius: 10, border: "none", background: `linear-gradient(135deg, ${TOKEN.blue}, ${TOKEN.cyan})`, color: "#fff", cursor: "pointer", fontSize: 14, fontWeight: 600 }}>
+      <GlassCard style={{ padding: 24, textAlign: "center" }}>
+        <div style={{ fontSize: 48, marginBottom: 16 }}>🏆</div>
+        <div style={{ fontSize: 22, fontWeight: 800, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif", marginBottom: 8 }}>Prova Concluída!</div>
+        <div style={{ fontSize: 13, color: TOKEN.textMuted, marginBottom: 24 }}>Você acertou {score.correct} de {score.answered} questões</div>
+        <div style={{ display: "inline-block", padding: "16px 32px", borderRadius: 12, background: "rgba(56,139,253,0.1)", border: `1px solid ${TOKEN.border}`, marginBottom: 24 }}>
+          <div style={{ fontSize: 32, fontWeight: 800, color: TOKEN.blue, fontFamily: "'Syne', sans-serif" }}>{score.percentage}%</div>
+          <div style={{ fontSize: 11, color: TOKEN.textMuted }}>Taxa de acerto</div>
+        </div>
+        <motion.button onClick={() => setExamCompleted(false)} whileHover={{ scale: 1.02 }}
+          style={{ padding: "12px 32px", borderRadius: 10, border: "none",
+            background: `linear-gradient(135deg, ${TOKEN.blue}, ${TOKEN.cyan})`,
+            color: "#fff", cursor: "pointer", fontSize: 14, fontWeight: 700 }}>
           Voltar aos simulados
         </motion.button>
       </GlassCard>
@@ -881,34 +924,53 @@ const ExamsPage = ({ onUpdateProgress, onShowToast }) => {
 
   return (
     <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 20 }}>
-      <GlassCard style={{ padding: 24 }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: TOKEN.textPrimary, marginBottom: 20 }}>⚡ Simulados Disponíveis</div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {exams.map((e, i) => (
-            <motion.div key={i} whileHover={{ x: 3 }} style={{ padding: "16px 18px", borderRadius: 12, background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKEN.border}` }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                <div style={{ fontSize: 14, fontWeight: 600, color: TOKEN.textPrimary }}>{e.title}</div>
-                <Badge color={e.level === "Difícil" ? "orange" : e.level === "Médio" ? "cyan" : "green"}>{e.level}</Badge>
-              </div>
-              <div style={{ fontSize: 12, color: TOKEN.textMuted, marginBottom: 12 }}>{e.subject}</div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div style={{ display: "flex", gap: 12 }}>
-                  <span style={{ fontSize: 11, color: TOKEN.textSecondary }}>📝 {e.questions.length} questões</span>
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <GlassCard style={{ padding: 20 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif", marginBottom: 14 }}>⚡ Simulados Disponíveis</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {exams.map((e, i) => (
+              <motion.div key={i} whileHover={{ x: 3 }} style={{ padding: "14px 16px", borderRadius: 12,
+                background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKEN.border}`, cursor: "pointer" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: TOKEN.textPrimary }}>{e.title}</div>
+                  <Badge color={e.level === "Difícil" ? "orange" : e.level === "Médio" ? "cyan" : "green"}>{e.level}</Badge>
                 </div>
-                <motion.button onClick={() => handleStartExam(i)} whileHover={{ scale: 1.05 }} style={{ padding: "6px 16px", borderRadius: 8, border: "none", background: `linear-gradient(135deg, ${e.color}, ${e.color}aa)`, color: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 600 }}>
-                  Iniciar
-                </motion.button>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </GlassCard>
+                <div style={{ fontSize: 11, color: TOKEN.textMuted, marginBottom: 10 }}>{e.subject}</div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div style={{ display: "flex", gap: 12 }}>
+                    <span style={{ fontSize: 11, color: TOKEN.textSecondary }}>📝 {e.questions} questões</span>
+                    <span style={{ fontSize: 11, color: TOKEN.textSecondary }}>⏱ {e.time}</span>
+                  </div>
+                  <motion.button onClick={() => handleStartExam(i)} whileHover={{ scale: 1.05, boxShadow: `0 0 12px ${e.color}55` }} style={{ padding: "5px 14px", borderRadius: 7, border: "none",
+                    background: `linear-gradient(135deg, ${e.color}, ${e.color}aa)`, color: "#fff", cursor: "pointer", fontSize: 11, fontWeight: 600 }}>
+                    Iniciar
+                  </motion.button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </GlassCard>
+        <GlassCard style={{ padding: 20 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif", marginBottom: 12 }}>📤 Upload de Material</div>
+          <motion.div whileHover={{ borderColor: TOKEN.blue }}
+            style={{ border: `2px dashed ${TOKEN.border}`, borderRadius: 12, padding: "24px", textAlign: "center", cursor: "pointer", transition: "border-color 0.2s" }}>
+            <div style={{ fontSize: 28, marginBottom: 8 }}>☁️</div>
+            <div style={{ fontSize: 13, color: TOKEN.textSecondary, fontWeight: 500, marginBottom: 4 }}>Arraste seus PDFs aqui</div>
+            <div style={{ fontSize: 11, color: TOKEN.textMuted }}>PDF, DOCX, PPTX • Máx 50MB</div>
+            <input type="file" accept=".pdf,.docx,.pptx" style={{ display: "none" }} id="file-upload" />
+            <motion.label htmlFor="file-upload" whileHover={{ scale: 1.03 }} style={{ display: "inline-block", marginTop: 12, padding: "8px 20px", borderRadius: 8, border: `1px solid ${TOKEN.border}`,
+              background: "rgba(56,139,253,0.1)", color: TOKEN.blue, cursor: "pointer", fontSize: 12, fontWeight: 600 }}>
+              Escolher arquivo
+            </motion.label>
+          </motion.div>
+        </GlassCard>
+      </div>
 
-      <GlassCard style={{ padding: 40, display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
-        <div>
-          <div style={{ fontSize: 56, marginBottom: 16 }}>📚</div>
-          <div style={{ fontSize: 18, fontWeight: 600, color: TOKEN.textPrimary, marginBottom: 8 }}>Selecione um simulado</div>
-          <div style={{ fontSize: 13, color: TOKEN.textMuted }}>Escolha uma prova acima para testar seus conhecimentos</div>
+      <GlassCard style={{ padding: 24, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 400 }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>📚</div>
+          <div style={{ fontSize: 16, fontWeight: 600, color: TOKEN.textPrimary, marginBottom: 8 }}>Selecione um simulado</div>
+          <div style={{ fontSize: 12, color: TOKEN.textMuted }}>Escolha uma prova acima para começar</div>
         </div>
       </GlassCard>
     </div>
@@ -919,248 +981,314 @@ const ExamsPage = ({ onUpdateProgress, onShowToast }) => {
 // PERFORMANCE PAGE
 // ══════════════════════════════════════════════════════════════════════════════
 const PerformancePage = ({ userProgress }) => {
+  const subjectPerformance = [
+    { name: "Contabilidade Geral", correct: 85, incorrect: 15, color: TOKEN.blue },
+    { name: "Cont. Societária", correct: 72, incorrect: 28, color: TOKEN.cyan },
+    { name: "Cont. de Custos", correct: 60, incorrect: 40, color: TOKEN.purple },
+    { name: "Análise de Balanços", correct: 78, incorrect: 22, color: TOKEN.green },
+    { name: "Auditoria", correct: 55, incorrect: 45, color: TOKEN.orange },
+  ];
+
+  const weekDays = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+  const weekData = [55, 62, 58, 70, 65, 72, userProgress.accuracy];
+
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
         {[
           { label: "Total de questões", value: userProgress.totalQuestions, delta: "+124 esta semana", icon: "📝", color: TOKEN.blue },
-          { label: "Taxa de acerto", value: `${userProgress.accuracy}%`, delta: `+${userProgress.accuracyChange}%`, icon: "🎯", color: TOKEN.green },
-          { label: "Tempo de estudo", value: `${Math.floor(userProgress.studyTime / 60)}h ${userProgress.studyTime % 60}m`, delta: "Total acumulado", icon: "⏱", color: TOKEN.cyan },
-          { label: "Nível atual", value: `Lv ${userProgress.level}`, delta: `${userProgress.xp}/${userProgress.maxXp} XP`, icon: "🏆", color: TOKEN.purple },
+          { label: "Taxa de acerto", value: `${userProgress.accuracy}%`, delta: `+${userProgress.accuracyChange}% vs. mês anterior`, icon: "🎯", color: TOKEN.green },
+          { label: "Tempo médio/questão", value: "1m 42s", delta: "-12s vs. semana", icon: "⚡", color: TOKEN.cyan },
+          { label: "Simulados completos", value: "23", delta: "3 esta semana", icon: "🏆", color: TOKEN.purple },
         ].map((m, i) => (
-          <motion.div key={i} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: i * 0.1 }}>
+          <motion.div key={i} initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: i * 0.07 }}>
             <GlassCard style={{ padding: 18 }}>
-              <div style={{ fontSize: 24, marginBottom: 8 }}>{m.icon}</div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: m.color, fontFamily: "'Syne', sans-serif" }}>{m.value}</div>
+              <div style={{ fontSize: 20, marginBottom: 8 }}>{m.icon}</div>
+              <div style={{ fontSize: 22, fontWeight: 800, color: m.color, fontFamily: "'Syne', sans-serif", letterSpacing: "-0.04em" }}>{m.value}</div>
               <div style={{ fontSize: 11, color: TOKEN.textMuted, marginTop: 2 }}>{m.label}</div>
-              <div style={{ fontSize: 11, color: m.color, marginTop: 4 }}>{m.delta}</div>
+              <div style={{ fontSize: 11, color: m.color, marginTop: 4, fontWeight: 500 }}>{m.delta}</div>
             </GlassCard>
           </motion.div>
         ))}
       </div>
 
-      <GlassCard style={{ padding: 24 }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: TOKEN.textPrimary, marginBottom: 20 }}>📊 Estatísticas Detalhadas</div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, textAlign: "center" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        <GlassCard style={{ padding: 22 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif", marginBottom: 16 }}>📈 Evolução Semanal</div>
+          <div style={{ display: "flex", gap: 6, alignItems: "flex-end", height: 100 }}>
+            {weekData.map((v, i) => (
+              <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                <div style={{ fontSize: 9, color: TOKEN.textMuted }}>{v}%</div>
+                <motion.div initial={{ height: 0 }} animate={{ height: `${v}%` }}
+                  transition={{ delay: i * 0.06, duration: 0.7 }}
+                  style={{ width: "100%", background: `linear-gradient(180deg, ${TOKEN.blue}, ${TOKEN.cyan}44)`,
+                    borderRadius: "4px 4px 2px 2px", minHeight: 4, opacity: 0.5 + (i / weekData.length) * 0.5 }} />
+                <span style={{ fontSize: 9, color: TOKEN.textMuted }}>{weekDays[i]}</span>
+              </div>
+            ))}
+          </div>
+        </GlassCard>
+
+        <GlassCard style={{ padding: 22 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif", marginBottom: 16 }}>🎯 Desempenho por Disciplina</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {subjectPerformance.map((s, i) => (
+              <div key={i}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+                  <span style={{ fontSize: 12, color: TOKEN.textSecondary }}>{s.name}</span>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <span style={{ fontSize: 11, color: TOKEN.green }}>{s.correct}% ✓</span>
+                    <span style={{ fontSize: 11, color: TOKEN.red }}>{s.incorrect}% ✗</span>
+                  </div>
+                </div>
+                <div style={{ display: "flex", height: 6, borderRadius: 99, overflow: "hidden", gap: 1 }}>
+                  <motion.div initial={{ width: 0 }} animate={{ width: `${s.correct}%` }} transition={{ delay: i * 0.1, duration: 0.8 }}
+                    style={{ background: s.color, borderRadius: "99px 0 0 99px" }} />
+                  <motion.div initial={{ width: 0 }} animate={{ width: `${s.incorrect}%` }} transition={{ delay: i * 0.1 + 0.1, duration: 0.8 }}
+                    style={{ background: "rgba(239,68,68,0.3)", borderRadius: "0 99px 99px 0" }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </GlassCard>
+      </div>
+
+      <GlassCard style={{ padding: 22 }}>
+        <div style={{ fontSize: 14, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif", marginBottom: 16 }}>⏱ Estatísticas de Estudo</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, textAlign: "center" }}>
           <div>
-            <div style={{ fontSize: 36, fontWeight: 800, color: TOKEN.blue }}>{userProgress.correctAnswers}</div>
-            <div style={{ fontSize: 12, color: TOKEN.textMuted }}>Acertos</div>
+            <div style={{ fontSize: 28, fontWeight: 800, color: TOKEN.blue, fontFamily: "'Syne', sans-serif" }}>{Math.floor(userProgress.studyTime / 60)}h</div>
+            <div style={{ fontSize: 11, color: TOKEN.textMuted }}>Tempo total</div>
           </div>
           <div>
-            <div style={{ fontSize: 36, fontWeight: 800, color: TOKEN.red }}>{userProgress.wrongAnswers}</div>
-            <div style={{ fontSize: 12, color: TOKEN.textMuted }}>Erros</div>
+            <div style={{ fontSize: 28, fontWeight: 800, color: TOKEN.green, fontFamily: "'Syne', sans-serif" }}>{userProgress.totalQuestions}</div>
+            <div style={{ fontSize: 11, color: TOKEN.textMuted }}>Questões respondidas</div>
           </div>
           <div>
-            <div style={{ fontSize: 36, fontWeight: 800, color: TOKEN.green }}>{userProgress.streak}</div>
-            <div style={{ fontSize: 12, color: TOKEN.textMuted }}>Dias de streak</div>
+            <div style={{ fontSize: 28, fontWeight: 800, color: TOKEN.orange, fontFamily: "'Syne', sans-serif" }}>{userProgress.streak}</div>
+            <div style={{ fontSize: 11, color: TOKEN.textMuted }}>Dias de streak</div>
           </div>
         </div>
       </GlassCard>
-    </motion.div>
+    </div>
   );
 };
 
 // ══════════════════════════════════════════════════════════════════════════════
 // GOALS PAGE
 // ══════════════════════════════════════════════════════════════════════════════
-const GoalsPage = ({ userProgress, goals, onAddGoal, onToggleGoal, onShowToast }) => {
+const GoalsPage = ({ userProgress, onUpdateProgress, goals, onAddGoal }) => {
   const [newGoalTitle, setNewGoalTitle] = useState("");
   const [showAddGoal, setShowAddGoal] = useState(false);
 
-  const calculateProgress = (goal) => {
+  const calculateGoalProgress = (goal) => {
     if (goal.type === "questions") return Math.min(100, Math.round((userProgress.totalQuestions / goal.target) * 100));
     if (goal.type === "streak") return Math.min(100, Math.round((userProgress.streak / goal.target) * 100));
     if (goal.type === "accuracy") return Math.min(100, Math.round((userProgress.accuracy / goal.target) * 100));
-    return goal.progress;
+    if (goal.type === "study_time") return Math.min(100, Math.round((userProgress.studyTime / goal.target) * 100));
+    return goal.progress || 0;
   };
 
   const handleAddGoal = () => {
     if (newGoalTitle.trim()) {
-      onAddGoal({ title: newGoalTitle, progress: 0, target: 100, deadline: "30 dias", color: TOKEN.blue, icon: "🎯" });
+      onAddGoal({ title: newGoalTitle, progress: 0, target: 100, deadline: "30 dias", color: TOKEN.blue, icon: "🎯", type: "custom" });
       setNewGoalTitle("");
       setShowAddGoal(false);
-      onShowToast(`🎯 Nova meta adicionada: ${newGoalTitle}`, "success");
     }
   };
 
+  const displayGoals = goals.map(g => ({ ...g, progress: g.type ? calculateGoalProgress(g) : g.progress }));
+
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      <GlassCard style={{ padding: 24 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-          <div style={{ fontSize: 16, fontWeight: 700, color: TOKEN.textPrimary }}>🎯 Minhas Metas</div>
-          <motion.button onClick={() => setShowAddGoal(!showAddGoal)} whileHover={{ scale: 1.05 }} style={{ padding: "8px 16px", borderRadius: 8, border: `1px solid ${TOKEN.border}`, background: "rgba(56,139,253,0.1)", color: TOKEN.blue, cursor: "pointer", fontSize: 13 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <GlassCard style={{ padding: 20 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif" }}>🎯 Minhas Metas</div>
+          <motion.button onClick={() => setShowAddGoal(!showAddGoal)} whileHover={{ scale: 1.05 }}
+            style={{ padding: "6px 12px", borderRadius: 8, border: `1px solid ${TOKEN.border}`,
+              background: "rgba(56,139,253,0.1)", color: TOKEN.blue, cursor: "pointer", fontSize: 12 }}>
             + Nova meta
           </motion.button>
         </div>
         
         <AnimatePresence>
           {showAddGoal && (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} style={{ marginBottom: 20, padding: 16, borderRadius: 12, background: "rgba(56,139,253,0.08)", border: `1px solid ${TOKEN.border}` }}>
-              <input type="text" value={newGoalTitle} onChange={(e) => setNewGoalTitle(e.target.value)} placeholder="Digite sua meta..." style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: `1px solid ${TOKEN.border}`, background: TOKEN.bg, color: TOKEN.textPrimary, fontSize: 13, marginBottom: 12, outline: "none" }} />
-              <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-                <button onClick={() => setShowAddGoal(false)} style={{ padding: "8px 16px", borderRadius: 6, border: `1px solid ${TOKEN.border}`, background: "transparent", color: TOKEN.textMuted, cursor: "pointer", fontSize: 12 }}>Cancelar</button>
-                <button onClick={handleAddGoal} style={{ padding: "8px 16px", borderRadius: 6, border: "none", background: `linear-gradient(135deg, ${TOKEN.blue}, ${TOKEN.cyan})`, color: "#fff", cursor: "pointer", fontSize: 12 }}>Adicionar</button>
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+              style={{ marginBottom: 16, padding: 12, borderRadius: 10, background: "rgba(56,139,253,0.08)", border: `1px solid ${TOKEN.border}` }}>
+              <input type="text" value={newGoalTitle} onChange={(e) => setNewGoalTitle(e.target.value)}
+                placeholder="Nome da meta..." style={{ width: "100%", padding: "10px 12px", borderRadius: 8, border: `1px solid ${TOKEN.border}`,
+                  background: TOKEN.bg, color: TOKEN.textPrimary, fontSize: 13, marginBottom: 10, outline: "none" }} />
+              <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+                <button onClick={() => setShowAddGoal(false)} style={{ padding: "6px 12px", borderRadius: 6, border: `1px solid ${TOKEN.border}`,
+                  background: "transparent", color: TOKEN.textMuted, cursor: "pointer", fontSize: 12 }}>Cancelar</button>
+                <button onClick={handleAddGoal} style={{ padding: "6px 12px", borderRadius: 6, border: "none",
+                  background: `linear-gradient(135deg, ${TOKEN.blue}, ${TOKEN.cyan})`, color: "#fff", cursor: "pointer", fontSize: 12 }}>Adicionar</button>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
         
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          {goals.map((goal, i) => {
-            const progress = calculateProgress(goal);
-            const completed = progress >= 100;
-            return (
-              <motion.div key={goal.id} initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: i * 0.1 }}
-                whileHover={{ x: 3 }} style={{ padding: "16px 18px", borderRadius: 12, background: completed ? "rgba(34,197,94,0.06)" : "rgba(255,255,255,0.025)", border: `1px solid ${completed ? "rgba(34,197,94,0.2)" : TOKEN.border}` }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <span style={{ fontSize: 22 }}>{goal.icon}</span>
-                    <span style={{ fontSize: 14, fontWeight: 600, color: TOKEN.textPrimary, textDecoration: completed ? "line-through" : "none" }}>{goal.title}</span>
-                  </div>
-                  <span style={{ fontSize: 16, fontWeight: 800, color: completed ? TOKEN.green : goal.color }}>{progress}%</span>
+          {displayGoals.map((g, i) => (
+            <motion.div key={i} initial={{ x: -16, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: i * 0.08 }}
+              style={{ padding: "16px 18px", borderRadius: 12, background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKEN.border}` }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span style={{ fontSize: 20 }}>{g.icon}</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: TOKEN.textPrimary }}>{g.title}</span>
                 </div>
-                <ProgressBar value={progress} color={completed ? TOKEN.green : goal.color} height={6} />
-                {completed && <div style={{ marginTop: 8, fontSize: 11, color: TOKEN.green, fontWeight: 600 }}>🏆 Meta concluída!</div>}
-              </motion.div>
-            );
-          })}
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span style={{ fontSize: 11, color: TOKEN.textMuted }}>📅 {g.deadline}</span>
+                  <span style={{ fontSize: 15, fontWeight: 800, color: g.color, fontFamily: "'Syne', sans-serif" }}>{g.progress}%</span>
+                </div>
+              </div>
+              <ProgressBar value={g.progress} color={g.color} height={6} />
+              {g.progress >= 90 && g.progress < 100 && <div style={{ marginTop: 6, fontSize: 11, color: TOKEN.green, fontWeight: 600 }}>🎉 Quase lá!</div>}
+              {g.progress >= 100 && <div style={{ marginTop: 6, fontSize: 11, color: TOKEN.green, fontWeight: 600 }}>🏆 Meta concluída!</div>}
+            </motion.div>
+          ))}
         </div>
       </GlassCard>
-    </motion.div>
+    </div>
   );
 };
 
 // ══════════════════════════════════════════════════════════════════════════════
 // PLAN PAGE
 // ══════════════════════════════════════════════════════════════════════════════
-const PlanPage = ({ planTasks, onToggleTask, onShowToast }) => {
+const PlanPage = ({ planTasks, onToggleTask }) => {
   const plan = [
-    { id: "task1", time: "08:00 - 09:30", subject: "Contabilidade Geral", topic: "Conceitos fundamentais", type: "Estudo", color: TOKEN.blue },
-    { id: "task2", time: "10:00 - 10:30", subject: "Revisão", topic: "Balanço Patrimonial", type: "Revisão", color: TOKEN.orange },
-    { id: "task3", time: "14:00 - 15:30", subject: "Cont. Societária", topic: "DRE (CPC 26)", type: "Estudo", color: TOKEN.cyan },
-    { id: "task4", time: "16:00 - 16:30", subject: "Simulado", topic: "10 questões", type: "Prova", color: TOKEN.purple },
-    { id: "task5", time: "19:00 - 20:00", subject: "Revisão Espaçada", topic: "Conceitos do dia", type: "Revisão", color: TOKEN.green },
+    { id: "task1", time: "08:00 - 09:30", subject: "Contabilidade Geral", topic: "Obr. divulgação e publicação", type: "Estudo", color: TOKEN.blue, done: planTasks.includes("task1") },
+    { id: "task2", time: "10:00 - 10:30", subject: "Revisão", topic: "Balanço Patrimonial", type: "Revisão", color: TOKEN.orange, done: planTasks.includes("task2") },
+    { id: "task3", time: "14:00 - 15:30", subject: "Cont. Societária", topic: "DRE (CPC 26)", type: "Estudo", color: TOKEN.cyan, done: planTasks.includes("task3") },
+    { id: "task4", time: "16:00 - 16:30", subject: "Simulado", topic: "10 questões - Nível médio", type: "Prova", color: TOKEN.purple, done: planTasks.includes("task4") },
+    { id: "task5", time: "19:00 - 20:00", subject: "Revisão Espaçada", topic: "Conceitos-chave do dia", type: "Revisão", color: TOKEN.green, done: planTasks.includes("task5") },
   ];
 
-  const handleToggleTask = (taskId, taskTitle) => {
-    onToggleTask(taskId);
-    if (!planTasks.includes(taskId)) {
-      onShowToast(`✅ Tarefa concluída: ${taskTitle}`, "success");
-    }
-  };
-
-  const completedCount = planTasks.length;
+  const completedCount = plan.filter(t => t.done).length;
   const totalCount = plan.length;
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 20 }}>
-      <GlassCard style={{ padding: 24 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-          <div style={{ fontSize: 16, fontWeight: 700, color: TOKEN.textPrimary }}>📅 Plano de Hoje</div>
+    <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 18 }}>
+      <GlassCard style={{ padding: 22 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif" }}>📅 Plano de Hoje — {new Date().toLocaleDateString('pt-BR')}</div>
           <Badge color="cyan">IA Otimizado</Badge>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {plan.map((p, i) => {
-            const isCompleted = planTasks.includes(p.id);
-            return (
-              <motion.div key={i} initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: i * 0.1 }}
-                onClick={() => handleToggleTask(p.id, p.subject)} style={{ display: "flex", gap: 14, padding: "14px 16px", borderRadius: 12, cursor: "pointer", background: isCompleted ? "rgba(34,197,94,0.06)" : "rgba(255,255,255,0.025)", border: `1px solid ${isCompleted ? "rgba(34,197,94,0.2)" : TOKEN.border}`, opacity: isCompleted ? 0.7 : 1 }}>
-                <div style={{ width: 28, height: 28, borderRadius: 99, border: `2px solid ${isCompleted ? TOKEN.green : p.color}`, display: "flex", alignItems: "center", justifyContent: "center", background: isCompleted ? "rgba(34,197,94,0.15)" : "transparent", color: isCompleted ? TOKEN.green : p.color, fontSize: 12 }}>{isCompleted ? "✓" : "○"}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: TOKEN.textPrimary, textDecoration: isCompleted ? "line-through" : "none" }}>{p.subject}</span>
-                    <Badge color={p.type === "Revisão" ? "orange" : p.type === "Prova" ? "purple" : "blue"}>{p.type}</Badge>
-                  </div>
-                  <div style={{ fontSize: 12, color: TOKEN.textMuted }}>{p.topic}</div>
-                  <div style={{ fontSize: 11, color: p.color, marginTop: 4 }}>⏰ {p.time}</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {plan.map((p, i) => (
+            <motion.div key={i} initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: i * 0.08 }}
+              onClick={() => onToggleTask(p.id)}
+              style={{ display: "flex", gap: 14, padding: "14px 16px", borderRadius: 12, cursor: "pointer",
+                background: p.done ? "rgba(34,197,94,0.06)" : "rgba(255,255,255,0.025)",
+                border: `1px solid ${p.done ? "rgba(34,197,94,0.2)" : TOKEN.border}`,
+                opacity: p.done ? 0.7 : 1 }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: 50 }}>
+                <div style={{ width: 24, height: 24, borderRadius: 99, border: `2px solid ${p.done ? TOKEN.green : p.color}`,
+                  display: "flex", alignItems: "center", justifyContent: "center", background: p.done ? "rgba(34,197,94,0.15)" : "transparent",
+                  color: p.done ? TOKEN.green : p.color, fontSize: 12 }}>
+                  {p.done ? "✓" : "○"}
                 </div>
-              </motion.div>
-            );
-          })}
+                {i < plan.length - 1 && <div style={{ width: 1, flex: 1, marginTop: 6, background: TOKEN.border }} />}
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: TOKEN.textPrimary, textDecoration: p.done ? "line-through" : "none" }}>{p.subject}</span>
+                  <Badge color={p.type === "Revisão" ? "orange" : p.type === "Prova" ? "purple" : "blue"}>{p.type}</Badge>
+                </div>
+                <div style={{ fontSize: 11, color: TOKEN.textMuted }}>{p.topic}</div>
+                <div style={{ fontSize: 10, color: p.color, marginTop: 4, fontWeight: 500 }}>⏰ {p.time}</div>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </GlassCard>
-
-      <GlassCard style={{ padding: 24 }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: TOKEN.textPrimary, marginBottom: 16 }}>📊 Progresso do Dia</div>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-          <span style={{ fontSize: 13, color: TOKEN.textMuted }}>{completedCount} de {totalCount} tarefas</span>
-          <span style={{ fontSize: 14, fontWeight: 700, color: TOKEN.blue }}>{Math.round((completedCount / totalCount) * 100)}%</span>
-        </div>
-        <ProgressBar value={(completedCount / totalCount) * 100} color={TOKEN.blue} height={8} />
-        <div style={{ marginTop: 20, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-          <div style={{ padding: "14px", borderRadius: 10, background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", textAlign: "center" }}>
-            <div style={{ fontSize: 24, fontWeight: 800, color: TOKEN.green }}>{completedCount}</div>
-            <div style={{ fontSize: 11, color: TOKEN.textMuted }}>Concluídas</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <GlassCard style={{ padding: 20 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif", marginBottom: 12 }}>📊 Progresso do Dia</div>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+            <span style={{ fontSize: 11, color: TOKEN.textMuted }}>{completedCount} de {totalCount} tarefas</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: TOKEN.blue }}>{Math.round((completedCount / totalCount) * 100)}%</span>
           </div>
-          <div style={{ padding: "14px", borderRadius: 10, background: "rgba(56,139,253,0.08)", border: "1px solid rgba(56,139,253,0.2)", textAlign: "center" }}>
-            <div style={{ fontSize: 24, fontWeight: 800, color: TOKEN.blue }}>{totalCount - completedCount}</div>
-            <div style={{ fontSize: 11, color: TOKEN.textMuted }}>Pendentes</div>
+          <ProgressBar value={(completedCount / totalCount) * 100} color={TOKEN.blue} height={8} />
+          <div style={{ marginTop: 12, display: "flex", gap: 10 }}>
+            <div style={{ flex: 1, padding: "10px", borderRadius: 10, background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", textAlign: "center" }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: TOKEN.green }}>{completedCount}</div>
+              <div style={{ fontSize: 10, color: TOKEN.textMuted }}>Concluídas</div>
+            </div>
+            <div style={{ flex: 1, padding: "10px", borderRadius: 10, background: "rgba(56,139,253,0.08)", border: "1px solid rgba(56,139,253,0.2)", textAlign: "center" }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: TOKEN.blue }}>{totalCount - completedCount}</div>
+              <div style={{ fontSize: 10, color: TOKEN.textMuted }}>Pendentes</div>
+            </div>
           </div>
-        </div>
-      </GlassCard>
-    </motion.div>
+        </GlassCard>
+      </div>
+    </div>
   );
 };
 
 // ══════════════════════════════════════════════════════════════════════════════
 // REVIEWS PAGE
 // ══════════════════════════════════════════════════════════════════════════════
-const ReviewsPage = ({ completedReviews, onToggleReview, onUpdateProgress, onShowToast }) => {
+const ReviewsPage = ({ completedReviews, onToggleReview, onUpdateProgress }) => {
   const reviews = [
-    { id: "rev1", topic: "Balanço Patrimonial", subject: "Cont. Geral", lastSeen: "3 dias", dueScore: 95, color: TOKEN.orange, urgent: true },
-    { id: "rev2", topic: "DRE e Resultado", subject: "Cont. Societária", lastSeen: "5 dias", dueScore: 88, color: TOKEN.blue, urgent: false },
-    { id: "rev3", topic: "Custeio por Absorção", subject: "Cont. de Custos", lastSeen: "7 dias", dueScore: 82, color: TOKEN.purple, urgent: false },
-    { id: "rev4", topic: "Análise Horizontal", subject: "Análise de Balanços", lastSeen: "2 dias", dueScore: 91, color: TOKEN.cyan, urgent: true },
-    { id: "rev5", topic: "Fluxo de Caixa", subject: "Cont. Geral", lastSeen: "10 dias", dueScore: 76, color: TOKEN.green, urgent: false },
+    { id: "rev1", topic: "Balanço Patrimonial", subject: "Cont. Geral", lastSeen: "3 dias", dueScore: 95, color: TOKEN.orange, urgent: true, completed: completedReviews.includes("rev1") },
+    { id: "rev2", topic: "DRE e Resultado", subject: "Cont. Societária", lastSeen: "5 dias", dueScore: 88, color: TOKEN.blue, urgent: false, completed: completedReviews.includes("rev2") },
+    { id: "rev3", topic: "Custeio por Absorção", subject: "Cont. de Custos", lastSeen: "7 dias", dueScore: 82, color: TOKEN.purple, urgent: false, completed: completedReviews.includes("rev3") },
+    { id: "rev4", topic: "Análise Horizontal", subject: "Análise de Balanços", lastSeen: "2 dias", dueScore: 91, color: TOKEN.cyan, urgent: true, completed: completedReviews.includes("rev4") },
+    { id: "rev5", topic: "Fluxo de Caixa DFC", subject: "Cont. Geral", lastSeen: "10 dias", dueScore: 76, color: TOKEN.green, urgent: false, completed: completedReviews.includes("rev5") },
   ];
 
-  const handleReview = (reviewId, reviewTitle, xpGain = 15) => {
+  const handleReview = (reviewId, xpGain = 15) => {
     if (!completedReviews.includes(reviewId)) {
       onToggleReview(reviewId);
       onUpdateProgress({ type: "ADD_XP", value: xpGain });
       onUpdateProgress({ type: "ADD_QUESTION" });
-      onShowToast(`📖 Revisão concluída: ${reviewTitle}! +${xpGain} XP`, "success");
     }
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      <GlassCard style={{ padding: 24 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-          <div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: TOKEN.textPrimary }}>🔄 Revisões Inteligentes</div>
-            <div style={{ fontSize: 12, color: TOKEN.textMuted, marginTop: 4 }}>Baseado no algoritmo de repetição espaçada</div>
-          </div>
-          <Badge color="cyan">{reviews.filter(r => !completedReviews.includes(r.id)).length} pendentes</Badge>
+    <GlassCard style={{ padding: 24 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+        <div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: TOKEN.textPrimary, fontFamily: "'Syne', sans-serif" }}>🔄 Revisões Inteligentes</div>
+          <div style={{ fontSize: 11, color: TOKEN.textMuted, marginTop: 2 }}>Algoritmo de repetição espaçada (SM-2)</div>
         </div>
-        
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {reviews.map((r, i) => {
-            const isCompleted = completedReviews.includes(r.id);
-            return (
-              <motion.div key={i} initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: i * 0.1 }}
-                whileHover={{ x: 3 }} style={{ display: "flex", alignItems: "center", gap: 16, padding: "14px 18px", borderRadius: 12, background: isCompleted ? "rgba(34,197,94,0.06)" : (r.urgent ? "rgba(249,115,22,0.06)" : "rgba(255,255,255,0.025)"), border: `1px solid ${isCompleted ? "rgba(34,197,94,0.3)" : (r.urgent ? "rgba(249,115,22,0.2)" : TOKEN.border)}`, opacity: isCompleted ? 0.6 : 1 }}>
-                <div style={{ fontSize: 28 }}>{isCompleted ? "✅" : (r.urgent ? "🔴" : "📘")}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: TOKEN.textPrimary }}>{r.topic}</div>
-                  <div style={{ fontSize: 12, color: TOKEN.textMuted }}>{r.subject} • Visto há {r.lastSeen}</div>
-                </div>
-                <div style={{ textAlign: "right", marginRight: 12 }}>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: r.color }}>{r.dueScore}</div>
-                  <div style={{ fontSize: 10, color: TOKEN.textMuted }}>prioridade</div>
-                </div>
-                {!isCompleted && (
-                  <motion.button onClick={() => handleReview(r.id, r.topic)} whileHover={{ scale: 1.04 }} style={{ padding: "8px 20px", borderRadius: 8, border: "none", background: `linear-gradient(135deg, ${r.color}, ${r.color}aa)`, color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>
-                    Revisar
-                  </motion.button>
-                )}
-                {isCompleted && <Badge color="green">Concluído</Badge>}
-              </motion.div>
-            );
-          })}
-        </div>
-      </GlassCard>
-    </motion.div>
+        <Badge color="cyan">{reviews.filter(r => !r.completed).length} pendentes</Badge>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {reviews.map((r, i) => (
+          <motion.div key={i} initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: i * 0.07 }}
+            whileHover={{ x: 3 }} style={{ display: "flex", alignItems: "center", gap: 16, padding: "14px 18px", borderRadius: 12,
+              background: r.completed ? "rgba(34,197,94,0.06)" : (r.urgent ? "rgba(249,115,22,0.06)" : "rgba(255,255,255,0.025)"),
+              border: `1px solid ${r.completed ? "rgba(34,197,94,0.3)" : (r.urgent ? "rgba(249,115,22,0.2)" : TOKEN.border)}`,
+              opacity: r.completed ? 0.6 : 1 }}>
+            <div style={{ width: 40, height: 40, borderRadius: 10, background: `${r.color}22`, border: `1px solid ${r.color}44`,
+              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>
+              {r.completed ? "✅" : (r.urgent ? "🔴" : "📘")}
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: TOKEN.textPrimary, marginBottom: 2 }}>{r.topic}</div>
+              <div style={{ fontSize: 11, color: TOKEN.textMuted }}>{r.subject} • Visto há {r.lastSeen}</div>
+            </div>
+            <div style={{ textAlign: "right", marginRight: 12 }}>
+              <div style={{ fontSize: 14, fontWeight: 800, color: r.color }}>{r.dueScore}</div>
+              <div style={{ fontSize: 10, color: TOKEN.textMuted }}>prioridade</div>
+            </div>
+            {!r.completed && (
+              <motion.button onClick={() => handleReview(r.id)} whileHover={{ scale: 1.04, boxShadow: `0 0 14px ${r.color}55` }} style={{ padding: "8px 16px", borderRadius: 8, border: "none",
+                background: `linear-gradient(135deg, ${r.color}, ${r.color}aa)`, color: "#fff",
+                cursor: "pointer", fontSize: 12, fontWeight: 600 }}>
+                Revisar
+              </motion.button>
+            )}
+            {r.completed && (
+              <Badge color="green">Concluído</Badge>
+            )}
+          </motion.div>
+        ))}
+      </div>
+    </GlassCard>
   );
 };
 
@@ -1168,31 +1296,29 @@ const ReviewsPage = ({ completedReviews, onToggleReview, onUpdateProgress, onSho
 // PAGE CONTENT ROUTER
 // ══════════════════════════════════════════════════════════════════════════════
 const PAGE_META = {
-  home: { title: "Olá, Estudante! 👋", subtitle: "Acompanhe seu progresso e mantenha o foco nos estudos" },
-  subjects: { title: "Disciplinas 📚", subtitle: "Gerencie suas matérias e acompanhe seu avanço" },
-  plan: { title: "Plano de Estudo 📅", subtitle: "Sua rotina inteligente para hoje" },
-  exams: { title: "Provas & Simulados ⚡", subtitle: "Teste seus conhecimentos com questões reais" },
-  performance: { title: "Desempenho 📊", subtitle: "Analise sua evolução e pontos de melhoria" },
-  reviews: { title: "Revisões Inteligentes 🔄", subtitle: "Revise no momento certo para fixar o conteúdo" },
-  goals: { title: "Metas 🎯", subtitle: "Defina objetivos e acompanhe suas conquistas" },
-  materials: { title: "Meus Materiais 📁", subtitle: "Gerencie seus arquivos e documentos de estudo" },
+  home: { title: "Olá, Estudante! 👋", subtitle: "Vamos organizar seus estudos e testar seu conhecimento." },
+  subjects: { title: "Disciplinas 📚", subtitle: "Gerencie todas as suas disciplinas e acompanhe o progresso." },
+  plan: { title: "Plano de Estudo 📅", subtitle: "Seu plano inteligente para hoje." },
+  exams: { title: "Provas & Simulados ⚡", subtitle: "Teste seus conhecimentos com questões personalizadas." },
+  performance: { title: "Desempenho 📊", subtitle: "Acompanhe sua evolução e identifique pontos de melhoria." },
+  reviews: { title: "Revisões Inteligentes 🔄", subtitle: "Sistema de repetição espaçada para não esquecer nada." },
+  goals: { title: "Metas 🎯", subtitle: "Defina e acompanhe seus objetivos de aprendizado." },
 };
 
-const PageContent = ({ page, userProgress, onUpdateProgress, planTasks, onToggleTask, completedReviews, onToggleReview, goals, onAddGoal, onToggleGoal, uploadedMaterials, onAddMaterial, onRemoveMaterial, onShowToast }) => {
+const PageContent = ({ page, userProgress, onUpdateProgress, planTasks, onToggleTask, completedReviews, onToggleReview, goals, onAddGoal, subjectsProgress }) => {
   const components = {
-    home: <HomeDashboard userProgress={userProgress} onUpdateProgress={onUpdateProgress} studyData={{ completedReviews }} onToggleTask={onToggleReview} onShowToast={onShowToast} />,
-    subjects: <SubjectsPage onUpdateProgress={onUpdateProgress} onShowToast={onShowToast} />,
-    plan: <PlanPage planTasks={planTasks} onToggleTask={onToggleTask} onShowToast={onShowToast} />,
-    exams: <ExamsPage onUpdateProgress={onUpdateProgress} onShowToast={onShowToast} />,
+    home: <HomeDashboard userProgress={userProgress} onUpdateProgress={onUpdateProgress} studyData={{ completedReviews }} onToggleTask={onToggleReview} />,
+    subjects: <SubjectsPage subjectsProgress={subjectsProgress} onUpdateProgress={onUpdateProgress} />,
+    plan: <PlanPage planTasks={planTasks} onToggleTask={onToggleTask} />,
+    exams: <ExamsPage onUpdateProgress={onUpdateProgress} />,
     performance: <PerformancePage userProgress={userProgress} />,
-    reviews: <ReviewsPage completedReviews={completedReviews} onToggleReview={onToggleReview} onUpdateProgress={onUpdateProgress} onShowToast={onShowToast} />,
-    goals: <GoalsPage userProgress={userProgress} goals={goals} onAddGoal={onAddGoal} onToggleGoal={onToggleGoal} onShowToast={onShowToast} />,
-    materials: <MaterialsPage onShowToast={onShowToast} uploadedMaterials={uploadedMaterials} onAddMaterial={onAddMaterial} onRemoveMaterial={onRemoveMaterial} />,
+    reviews: <ReviewsPage completedReviews={completedReviews} onToggleReview={onToggleReview} onUpdateProgress={onUpdateProgress} />,
+    goals: <GoalsPage userProgress={userProgress} onUpdateProgress={onUpdateProgress} goals={goals} onAddGoal={onAddGoal} />,
   };
   return (
     <AnimatePresence mode="wait">
-      <motion.div key={page} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
-        {components[page] || components.home}
+      <motion.div key={page} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
+        {components[page] || <HomeDashboard userProgress={userProgress} onUpdateProgress={onUpdateProgress} studyData={{ completedReviews }} onToggleTask={onToggleReview} />}
       </motion.div>
     </AnimatePresence>
   );
@@ -1204,39 +1330,25 @@ const PageContent = ({ page, userProgress, onUpdateProgress, planTasks, onToggle
 export default function App() {
   const [page, setPage] = useState("landing");
   const [activePage, setActivePage] = useState("home");
-  const [toasts, setToasts] = useState([]);
-  
-  // Estado do plano de estudo
   const [planTasks, setPlanTasks] = useState(() => {
     const saved = localStorage.getItem("planTasks");
     return saved ? JSON.parse(saved) : [];
   });
-  
-  // Estado das revisões completadas
   const [completedReviews, setCompletedReviews] = useState(() => {
     const saved = localStorage.getItem("completedReviews");
     return saved ? JSON.parse(saved) : [];
   });
-  
-  // Estado das metas
   const [goals, setGoals] = useState(() => {
     const saved = localStorage.getItem("goals");
     if (saved) return JSON.parse(saved);
     return [
       { id: "goal1", title: "Completar Contabilidade Geral", progress: 68, target: 100, deadline: "30 Jun", color: TOKEN.blue, icon: "📒" },
-      { id: "goal2", title: "100 questões respondidas", progress: 67, target: 100, deadline: "Dom 29", color: TOKEN.cyan, icon: "⚡", type: "questions" },
-      { id: "goal3", title: "80% de acerto", progress: 89, target: 80, deadline: "Contínuo", color: TOKEN.green, icon: "🎯", type: "accuracy" },
+      { id: "goal2", title: "100 questões esta semana", progress: 67, target: 100, deadline: "Dom 29", color: TOKEN.cyan, icon: "⚡", type: "questions" },
+      { id: "goal3", title: "90% de acerto em simulados", progress: 89, target: 90, deadline: "Contínuo", color: TOKEN.green, icon: "🎯", type: "accuracy" },
       { id: "goal4", title: "Streak de 30 dias", progress: 40, target: 30, deadline: "13 Jun", color: TOKEN.orange, icon: "🔥", type: "streak" },
+      { id: "goal5", title: "Finalizar revisões do mês", progress: 55, target: 100, deadline: "31 Mai", color: TOKEN.purple, icon: "📅" },
     ];
   });
-  
-  // Estado dos materiais enviados
-  const [uploadedMaterials, setUploadedMaterials] = useState(() => {
-    const saved = localStorage.getItem("uploadedMaterials");
-    return saved ? JSON.parse(saved) : [];
-  });
-  
-  // Estado do progresso do usuário
   const [userProgress, setUserProgress] = useState(() => {
     const saved = localStorage.getItem("userProgress");
     if (saved) return JSON.parse(saved);
@@ -1256,18 +1368,21 @@ export default function App() {
     };
   });
 
-  // Persistência no localStorage
-  useEffect(() => { localStorage.setItem("planTasks", JSON.stringify(planTasks)); }, [planTasks]);
-  useEffect(() => { localStorage.setItem("completedReviews", JSON.stringify(completedReviews)); }, [completedReviews]);
-  useEffect(() => { localStorage.setItem("goals", JSON.stringify(goals)); }, [goals]);
-  useEffect(() => { localStorage.setItem("uploadedMaterials", JSON.stringify(uploadedMaterials)); }, [uploadedMaterials]);
-  useEffect(() => { localStorage.setItem("userProgress", JSON.stringify(userProgress)); }, [userProgress]);
+  useEffect(() => {
+    localStorage.setItem("planTasks", JSON.stringify(planTasks));
+  }, [planTasks]);
 
-  const showToast = (message, type = "info") => {
-    const id = Date.now();
-    setToasts(prev => [...prev, { id, message, type }]);
-    setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 3000);
-  };
+  useEffect(() => {
+    localStorage.setItem("completedReviews", JSON.stringify(completedReviews));
+  }, [completedReviews]);
+
+  useEffect(() => {
+    localStorage.setItem("goals", JSON.stringify(goals));
+  }, [goals]);
+
+  useEffect(() => {
+    localStorage.setItem("userProgress", JSON.stringify(userProgress));
+  }, [userProgress]);
 
   const updateUserProgress = (action) => {
     setUserProgress(prev => {
@@ -1279,15 +1394,13 @@ export default function App() {
             newProgress.level++;
             newProgress.xp -= newProgress.maxXp;
             newProgress.maxXp = Math.round(newProgress.maxXp * 1.2);
-            showToast(`🎉 Parabéns! Você subiu para o nível ${newProgress.level}!`, "success");
           }
           break;
         case "ADD_QUESTION":
           newProgress.totalQuestions++;
           newProgress.todayQuestions++;
-          if (newProgress.todayQuestions >= newProgress.dailyGoal && prev.todayQuestions < newProgress.dailyGoal) {
+          if (newProgress.todayQuestions === newProgress.dailyGoal) {
             newProgress.streak++;
-            showToast(`🔥 Você completou sua meta diária! Streak: ${newProgress.streak} dias`, "success");
           }
           break;
         case "ADD_CORRECT_ANSWER":
@@ -1301,35 +1414,27 @@ export default function App() {
         case "ADD_STUDY_TIME":
           newProgress.studyTime += action.value;
           break;
-        default: break;
+        default:
+          break;
       }
       return newProgress;
     });
   };
 
   const togglePlanTask = (taskId) => {
-    setPlanTasks(prev => prev.includes(taskId) ? prev.filter(id => id !== taskId) : [...prev, taskId]);
+    setPlanTasks(prev => 
+      prev.includes(taskId) ? prev.filter(id => id !== taskId) : [...prev, taskId]
+    );
   };
 
   const toggleReview = (reviewId) => {
-    setCompletedReviews(prev => prev.includes(reviewId) ? prev : [...prev, reviewId]);
-  };
-
-  const toggleGoal = (goalId) => {
-    setGoals(prev => prev.map(g => g.id === goalId ? { ...g, completed: !g.completed } : g));
+    setCompletedReviews(prev =>
+      prev.includes(reviewId) ? prev.filter(id => id !== reviewId) : [...prev, reviewId]
+    );
   };
 
   const addGoal = (goal) => {
-    setGoals(prev => [...prev, { ...goal, id: `goal_${Date.now()}`, completed: false }]);
-  };
-
-  const addMaterial = (material) => {
-    setUploadedMaterials(prev => [material, ...prev]);
-  };
-
-  const removeMaterial = (materialId) => {
-    setUploadedMaterials(prev => prev.filter(m => m.id !== materialId));
-    showToast("🗑️ Material removido", "info");
+    setGoals(prev => [...prev, { ...goal, id: `goal_${Date.now()}` }]);
   };
 
   if (page === "landing") {
@@ -1358,30 +1463,25 @@ export default function App() {
         button { font-family: inherit; }
       `}</style>
 
-      {/* Toasts */}
-      <AnimatePresence>
-        {toasts.map(toast => (
-          <Toast key={toast.id} message={toast.message} type={toast.type} onClose={() => setToasts(prev => prev.filter(t => t.id !== toast.id))} />
-        ))}
-      </AnimatePresence>
-
-      {/* Background Orbs */}
+      {/* Background orbs */}
       <div style={{ position: "fixed", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
-        {[{ l: "5%", t: "15%", c: TOKEN.blue, s: 600 }, { l: "70%", t: "50%", c: TOKEN.cyan, s: 500 }, { l: "40%", t: "80%", c: TOKEN.purple, s: 400 }].map((b, i) => (
+        {[{ l: "5%", t: "15%", c: TOKEN.blue, s: 600, o: 0.03 }, { l: "70%", t: "50%", c: TOKEN.cyan, s: 500, o: 0.025 }, { l: "40%", t: "80%", c: TOKEN.purple, s: 400, o: 0.02 }].map((b, i) => (
           <motion.div key={i} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 10 + i * 3, repeat: Infinity }}
-            style={{ position: "absolute", left: b.l, top: b.t, width: b.s, height: b.s, borderRadius: "50%", background: b.c, filter: "blur(120px)", opacity: 0.03 }} />
+            style={{ position: "absolute", left: b.l, top: b.t, width: b.s, height: b.s, borderRadius: "50%",
+              background: b.c, filter: "blur(120px)", opacity: b.o }} />
         ))}
       </div>
 
       <div style={{ display: "flex", minHeight: "100vh", position: "relative", zIndex: 1 }}>
-        <Sidebar active={activePage} onNav={setActivePage} userProgress={userProgress} />
+        <Sidebar active={activePage} onNav={setActivePage} userProgress={userProgress} onUpdateProgress={updateUserProgress} />
         <main style={{ flex: 1, overflowY: "auto", padding: "28px 32px", minHeight: "100vh" }}>
-          <Topbar title={meta.title} streak={userProgress.streak} notifications={[]} />
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ fontSize: 13, color: TOKEN.textMuted, marginBottom: 24, marginTop: -20 }}>
+          <Topbar title={meta.title} streak={userProgress.streak} />
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
+            style={{ fontSize: 13, color: TOKEN.textMuted, marginBottom: 24, marginTop: -20, fontFamily: "'DM Sans', sans-serif" }}>
             {meta.subtitle}
           </motion.p>
           <PageContent 
-            page={activePage}
+            page={activePage} 
             userProgress={userProgress}
             onUpdateProgress={updateUserProgress}
             planTasks={planTasks}
@@ -1390,11 +1490,7 @@ export default function App() {
             onToggleReview={toggleReview}
             goals={goals}
             onAddGoal={addGoal}
-            onToggleGoal={toggleGoal}
-            uploadedMaterials={uploadedMaterials}
-            onAddMaterial={addMaterial}
-            onRemoveMaterial={removeMaterial}
-            onShowToast={showToast}
+            subjectsProgress={{}}
           />
         </main>
       </div>
