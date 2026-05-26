@@ -1,3 +1,4 @@
+// App.jsx — MeuEstudo — versão totalmente editável e funcional
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -110,12 +111,12 @@ const Field = ({ label, children }) => (
   </div>
 );
 const Input = ({ value, onChange, placeholder, type="text", onKeyDown }) => (
-  <input type={type} value={value || ""} onChange={onChange} placeholder={placeholder} onKeyDown={onKeyDown}
+  <input type={type} value={value} onChange={onChange} placeholder={placeholder} onKeyDown={onKeyDown}
     style={{ width:"100%", padding:"10px 12px", borderRadius:9, border:`1px solid ${T.border}`,
       background:"rgba(255,255,255,0.04)", color:T.text, fontSize:13, outline:"none", fontFamily:"'DM Sans',sans-serif" }} />
 );
 const Select = ({ value, onChange, children }) => (
-  <select value={value || ""} onChange={onChange}
+  <select value={value} onChange={onChange}
     style={{ width:"100%", padding:"10px 12px", borderRadius:9, border:`1px solid ${T.border}`,
       background:"rgba(8,16,36,0.9)", color:T.text, fontSize:13, outline:"none", fontFamily:"'DM Sans',sans-serif", cursor:"pointer" }}>
     {children}
@@ -143,15 +144,6 @@ const IconPick = ({ value, onChange }) => (
           background: value===ic ? "rgba(56,139,253,0.15)" : "rgba(255,255,255,0.04)",
           cursor:"pointer", fontSize:16 }}>{ic}</button>
     ))}
-  </div>
-);
-
-// ── Empty state ───────────────────────────────────────────────────────────────
-const Empty = ({ text, sub }) => (
-  <div style={{ textAlign:"center", padding:"30px 0" }}>
-    <div style={{ fontSize:36, marginBottom:10 }}>📭</div>
-    <div style={{ fontSize:13, color:T.textSec, marginBottom:4 }}>{text}</div>
-    {sub && <div style={{ fontSize:11, color:T.textMuted }}>{sub}</div>}
   </div>
 );
 
@@ -217,7 +209,7 @@ const Sidebar = ({ active, onNav, userProgress }) => (
           display:"flex", alignItems:"center", justifyContent:"center", fontSize:14 }}>👤</div>
         <div style={{ flex:1 }}>
           <div style={{ fontSize:12, fontWeight:600, color:T.text }}>{userProgress.name || "Estudante"}</div>
-          <div style={{ fontSize:10, color:T.textMuted }}>Nível {userProgress.level || 1} • {userProgress.xp || 0} XP</div>
+          <div style={{ fontSize:10, color:T.textMuted }}>Nível {userProgress.level} • {userProgress.xp} XP</div>
         </div>
       </div>
     </div>
@@ -239,7 +231,7 @@ const Topbar = ({ title, subtitle, streak }) => (
       <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
         <motion.div animate={{ scale:[1,1.08,1] }} transition={{ repeat:Infinity, duration:2 }}
           style={{ fontSize:20, filter:"drop-shadow(0 0 10px #F97316)" }}>🔥</motion.div>
-        <div style={{ fontSize:11, fontWeight:800, color:T.orange }}>{streak || 0} dias</div>
+        <div style={{ fontSize:11, fontWeight:800, color:T.orange }}>{streak} dias</div>
       </div>
     </div>
   </div>
@@ -249,14 +241,12 @@ const Topbar = ({ title, subtitle, streak }) => (
 // DASHBOARD HOME
 // ══════════════════════════════════════════════════════════════════════════════
 const HomeDashboard = ({ userProgress, subjects, goals, planTasks, reviews }) => {
-  const totalSubjects = subjects?.length || 0;
+  const totalSubjects = subjects.length;
   const avgProgress = totalSubjects > 0
-    ? Math.round(subjects.reduce((s, x) => s + (x.progress || 0), 0) / totalSubjects) : 0;
-  const completedTasks = planTasks?.filter(t => t.done).length || 0;
-  const totalTasks = planTasks?.length || 0;
-  const pendingReviews = reviews?.filter(r => !r.done).length || 0;
-  const completedGoals = goals?.filter(g => (g.progress || 0) >= 100).length || 0;
-  const totalGoals = goals?.length || 0;
+    ? Math.round(subjects.reduce((s, x) => s + x.progress, 0) / totalSubjects) : 0;
+  const completedTasks = planTasks.filter(t => t.done).length;
+  const pendingReviews = reviews.filter(r => !r.done).length;
+  const completedGoals = goals.filter(g => g.progress >= 100).length;
 
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:20 }}>
@@ -264,8 +254,8 @@ const HomeDashboard = ({ userProgress, subjects, goals, planTasks, reviews }) =>
       <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:14 }}>
         {[
           { label:"PROGRESSO GERAL", value:`${avgProgress}%`, sub:`${totalSubjects} disciplinas`, color:T.blue, icon:"📈" },
-          { label:"TAREFAS HOJE",    value:`${completedTasks}/${totalTasks || 0}`, sub:"concluídas", color:T.cyan, icon:"✅" },
-          { label:"STREAK",          value:`${userProgress?.streak || 0}`, sub:"dias seguidos", color:T.orange, icon:"🔥" },
+          { label:"TAREFAS HOJE",    value:`${completedTasks}/${planTasks.length}`, sub:"concluídas", color:T.cyan, icon:"✅" },
+          { label:"STREAK",          value:`${userProgress.streak}`, sub:"dias seguidos", color:T.orange, icon:"🔥" },
           { label:"REVISÕES",        value:String(pendingReviews), sub:"pendentes", color:T.purple, icon:"🔄" },
         ].map((k,i) => (
           <motion.div key={i} initial={{ y:16, opacity:0 }} animate={{ y:0, opacity:1 }} transition={{ delay:i*0.06 }}>
@@ -285,16 +275,16 @@ const HomeDashboard = ({ userProgress, subjects, goals, planTasks, reviews }) =>
       <div style={{ display:"grid", gridTemplateColumns:"1.4fr 1fr", gap:14 }}>
         <GlassCard style={{ padding:22 }}>
           <div style={{ fontSize:14, fontWeight:700, color:T.text, fontFamily:"'Syne',sans-serif", marginBottom:16 }}>📚 Disciplinas</div>
-          {subjects?.length === 0
+          {subjects.length === 0
             ? <Empty text="Nenhuma disciplina cadastrada ainda." sub="Vá em Disciplinas para adicionar." />
             : <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-                {subjects?.slice(0,5).map(s => (
+                {subjects.slice(0,5).map(s => (
                   <div key={s.id}>
                     <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
                       <span style={{ fontSize:12, color:T.textSec }}>{s.icon} {s.name}</span>
-                      <span style={{ fontSize:12, fontWeight:700, color:COLOR_MAP[s.color] || T.blue }}>{s.progress || 0}%</span>
+                      <span style={{ fontSize:12, fontWeight:700, color:COLOR_MAP[s.color] || T.blue }}>{s.progress}%</span>
                     </div>
-                    <Prog value={s.progress || 0} color={COLOR_MAP[s.color] || T.blue} h={4} />
+                    <Prog value={s.progress} color={COLOR_MAP[s.color] || T.blue} h={4} />
                   </div>
                 ))}
               </div>
@@ -303,16 +293,16 @@ const HomeDashboard = ({ userProgress, subjects, goals, planTasks, reviews }) =>
 
         <GlassCard style={{ padding:22 }}>
           <div style={{ fontSize:14, fontWeight:700, color:T.text, fontFamily:"'Syne',sans-serif", marginBottom:16 }}>🎯 Metas</div>
-          {goals?.length === 0
+          {goals.length === 0
             ? <Empty text="Nenhuma meta ainda." sub="Vá em Metas para criar." />
             : <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-                {goals?.slice(0,4).map(g => (
+                {goals.slice(0,4).map(g => (
                   <div key={g.id}>
                     <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
                       <span style={{ fontSize:12, color:T.textSec }}>{g.icon} {g.title}</span>
-                      <span style={{ fontSize:12, fontWeight:700, color:COLOR_MAP[g.color] || T.blue }}>{g.progress || 0}%</span>
+                      <span style={{ fontSize:12, fontWeight:700, color:COLOR_MAP[g.color] || T.blue }}>{g.progress}%</span>
                     </div>
-                    <Prog value={g.progress || 0} color={COLOR_MAP[g.color] || T.blue} h={4} />
+                    <Prog value={g.progress} color={COLOR_MAP[g.color] || T.blue} h={4} />
                   </div>
                 ))}
               </div>
@@ -326,16 +316,16 @@ const HomeDashboard = ({ userProgress, subjects, goals, planTasks, reviews }) =>
           <div style={{ width:52, height:52, borderRadius:14, background:`linear-gradient(135deg,${T.purple},${T.blue})`,
             display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, fontWeight:800, color:"#fff",
             fontFamily:"'Syne',sans-serif", boxShadow:`0 0 20px ${T.purple}44`, flexShrink:0 }}>
-            Lv{userProgress?.level || 1}
+            Lv{userProgress.level}
           </div>
           <div style={{ flex:1 }}>
             <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
               <span style={{ fontSize:13, fontWeight:600, color:T.text }}>Experiência</span>
-              <span style={{ fontSize:12, color:T.textMuted }}>{(userProgress?.xp || 0)} / {(userProgress?.maxXp || 500)} XP</span>
+              <span style={{ fontSize:12, color:T.textMuted }}>{userProgress.xp} / {userProgress.maxXp} XP</span>
             </div>
-            <Prog value={((userProgress?.xp || 0) / (userProgress?.maxXp || 500)) * 100} color={T.purple} h={8} />
+            <Prog value={(userProgress.xp/userProgress.maxXp)*100} color={T.purple} h={8} />
             <div style={{ fontSize:11, color:T.textMuted, marginTop:6 }}>
-              Faltam {(userProgress?.maxXp || 500) - (userProgress?.xp || 0)} XP para o nível {(userProgress?.level || 1) + 1}
+              Faltam {userProgress.maxXp - userProgress.xp} XP para o nível {userProgress.level+1}
             </div>
           </div>
         </div>
@@ -344,11 +334,20 @@ const HomeDashboard = ({ userProgress, subjects, goals, planTasks, reviews }) =>
   );
 };
 
+// ── Empty state ───────────────────────────────────────────────────────────────
+const Empty = ({ text, sub }) => (
+  <div style={{ textAlign:"center", padding:"30px 0" }}>
+    <div style={{ fontSize:36, marginBottom:10 }}>📭</div>
+    <div style={{ fontSize:13, color:T.textSec, marginBottom:4 }}>{text}</div>
+    {sub && <div style={{ fontSize:11, color:T.textMuted }}>{sub}</div>}
+  </div>
+);
+
 // ══════════════════════════════════════════════════════════════════════════════
 // SUBJECTS PAGE — CRUD completo
 // ══════════════════════════════════════════════════════════════════════════════
 const SubjectsPage = ({ subjects, setSubjects, onXP }) => {
-  const [modal, setModal] = useState(null);
+  const [modal, setModal] = useState(null); // null | "add" | { edit: subject }
   const [delTarget, setDelTarget] = useState(null);
   const [form, setForm] = useState({ name:"", icon:"📒", color:"blue", progress:0, notes:"" });
 
@@ -358,41 +357,39 @@ const SubjectsPage = ({ subjects, setSubjects, onXP }) => {
   const save = () => {
     if (!form.name.trim()) return;
     if (modal === "add") {
-      setSubjects(prev => [...(prev || []), { ...form, id:`sub_${Date.now()}`, progress: Number(form.progress) }]);
+      setSubjects(prev => [...prev, { ...form, id:`sub_${Date.now()}`, progress: Number(form.progress) }]);
       onXP(5);
     } else {
-      setSubjects(prev => (prev || []).map(s => s.id===modal.edit.id ? { ...s, ...form, progress:Number(form.progress) } : s));
+      setSubjects(prev => prev.map(s => s.id===modal.edit.id ? { ...s, ...form, progress:Number(form.progress) } : s));
     }
     setModal(null);
   };
 
   const del = () => {
-    setSubjects(prev => (prev || []).filter(s => s.id !== delTarget.id));
+    setSubjects(prev => prev.filter(s => s.id !== delTarget.id));
     setDelTarget(null);
   };
 
   const addProgress = (id, delta) => {
-    setSubjects(prev => (prev || []).map(s => {
+    setSubjects(prev => prev.map(s => {
       if (s.id !== id) return s;
-      const p = Math.min(100, Math.max(0, (s.progress || 0) + delta));
-      if (p > (s.progress || 0)) onXP(10);
+      const p = Math.min(100, Math.max(0, s.progress + delta));
+      if (p > s.progress) onXP(10);
       return { ...s, progress:p };
     }));
   };
 
-  const subjectsList = subjects || [];
-
   return (
     <div>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:18 }}>
-        <div style={{ fontSize:13, color:T.textMuted }}>{subjectsList.length} disciplina{subjectsList.length !== 1 ? "s" : ""} cadastrada{subjectsList.length !== 1 ? "s" : ""}</div>
+        <div style={{ fontSize:13, color:T.textMuted }}>{subjects.length} disciplina{subjects.length !== 1 ? "s" : ""} cadastrada{subjects.length !== 1 ? "s" : ""}</div>
         <Btn onClick={openAdd}>+ Nova disciplina</Btn>
       </div>
 
-      {subjectsList.length === 0
+      {subjects.length === 0
         ? <GlassCard style={{ padding:40 }}><Empty text="Nenhuma disciplina ainda." sub='Clique em "+ Nova disciplina" para começar.' /></GlassCard>
         : <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))", gap:16 }}>
-            {subjectsList.map((s,i) => {
+            {subjects.map((s,i) => {
               const col = COLOR_MAP[s.color] || T.blue;
               return (
                 <motion.div key={s.id} initial={{ y:20, opacity:0 }} animate={{ y:0, opacity:1 }} transition={{ delay:i*0.06 }}>
@@ -406,6 +403,7 @@ const SubjectsPage = ({ subjects, setSubjects, onXP }) => {
                           {s.notes && <div style={{ fontSize:11, color:T.textMuted, marginTop:2 }}>{s.notes}</div>}
                         </div>
                       </div>
+                      {/* Ações */}
                       <div style={{ display:"flex", gap:6 }}>
                         <button onClick={() => openEdit(s)} style={{ background:"rgba(255,255,255,0.05)", border:`1px solid ${T.border}`,
                           color:T.textMuted, cursor:"pointer", borderRadius:7, padding:"4px 8px", fontSize:11 }}>✏️</button>
@@ -417,9 +415,9 @@ const SubjectsPage = ({ subjects, setSubjects, onXP }) => {
                     <div style={{ marginBottom:14 }}>
                       <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
                         <span style={{ fontSize:11, color:T.textMuted }}>Progresso</span>
-                        <span style={{ fontSize:14, fontWeight:700, color:col }}>{s.progress || 0}%</span>
+                        <span style={{ fontSize:14, fontWeight:700, color:col }}>{s.progress}%</span>
                       </div>
-                      <Prog value={s.progress || 0} color={col} h={7} />
+                      <Prog value={s.progress} color={col} h={7} />
                     </div>
 
                     <div style={{ display:"flex", gap:8 }}>
@@ -437,6 +435,7 @@ const SubjectsPage = ({ subjects, setSubjects, onXP }) => {
           </div>
       }
 
+      {/* Modal add/edit */}
       <AnimatePresence>
         {modal && (
           <Modal title={modal==="add" ? "Nova Disciplina" : "Editar Disciplina"} onClose={() => setModal(null)}>
@@ -475,7 +474,7 @@ const PlanPage = ({ planTasks, setPlanTasks, subjects, onXP }) => {
   const [delTarget, setDelTarget] = useState(null);
   const [form, setForm] = useState({ subject:"", topic:"", time:"", type:"Estudo", color:"blue" });
 
-  const subjectOpts = subjects?.map(s => s.name) || [];
+  const subjectOpts = subjects.map(s => s.name);
   const TYPES = ["Estudo","Revisão","Prova","Exercícios","Leitura"];
 
   const openAdd = () => { setForm({ subject:"", topic:"", time:"", type:"Estudo", color:"blue" }); setModal("add"); };
@@ -484,15 +483,15 @@ const PlanPage = ({ planTasks, setPlanTasks, subjects, onXP }) => {
   const save = () => {
     if (!form.subject.trim()) return;
     if (modal === "add") {
-      setPlanTasks(prev => [...(prev || []), { ...form, id:`task_${Date.now()}`, done:false }]);
+      setPlanTasks(prev => [...prev, { ...form, id:`task_${Date.now()}`, done:false }]);
     } else {
-      setPlanTasks(prev => (prev || []).map(t => t.id===modal.edit.id ? { ...t, ...form } : t));
+      setPlanTasks(prev => prev.map(t => t.id===modal.edit.id ? { ...t, ...form } : t));
     }
     setModal(null);
   };
 
   const toggle = (id) => {
-    setPlanTasks(prev => (prev || []).map(t => {
+    setPlanTasks(prev => prev.map(t => {
       if (t.id !== id) return t;
       if (!t.done) onXP(15);
       return { ...t, done:!t.done };
@@ -500,12 +499,11 @@ const PlanPage = ({ planTasks, setPlanTasks, subjects, onXP }) => {
   };
 
   const del = () => {
-    setPlanTasks(prev => (prev || []).filter(t => t.id !== delTarget.id));
+    setPlanTasks(prev => prev.filter(t => t.id !== delTarget.id));
     setDelTarget(null);
   };
 
-  const tasksList = planTasks || [];
-  const done = tasksList.filter(t => t.done).length;
+  const done = planTasks.filter(t => t.done).length;
 
   return (
     <div style={{ display:"grid", gridTemplateColumns:"1.3fr 1fr", gap:18 }}>
@@ -517,10 +515,10 @@ const PlanPage = ({ planTasks, setPlanTasks, subjects, onXP }) => {
           <Btn small onClick={openAdd}>+ Tarefa</Btn>
         </div>
 
-        {tasksList.length === 0
+        {planTasks.length === 0
           ? <Empty text="Nenhuma tarefa no plano." sub='Clique em "+ Tarefa" para adicionar.' />
           : <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-              {tasksList.map((p,i) => {
+              {planTasks.map((p,i) => {
                 const col = COLOR_MAP[p.color] || T.blue;
                 return (
                   <motion.div key={p.id} initial={{ x:-10, opacity:0 }} animate={{ x:0, opacity:1 }} transition={{ delay:i*0.05 }}
@@ -557,24 +555,24 @@ const PlanPage = ({ planTasks, setPlanTasks, subjects, onXP }) => {
       <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
         <GlassCard style={{ padding:20 }}>
           <div style={{ fontSize:13, fontWeight:700, color:T.text, fontFamily:"'Syne',sans-serif", marginBottom:12 }}>📊 Progresso do Dia</div>
-          {tasksList.length > 0 ? (
+          {planTasks.length > 0 ? (
             <>
               <div style={{ display:"flex", justifyContent:"space-between", marginBottom:8 }}>
-                <span style={{ fontSize:11, color:T.textMuted }}>{done} de {tasksList.length}</span>
-                <span style={{ fontSize:13, fontWeight:700, color:T.blue }}>{Math.round((done/tasksList.length)*100)}%</span>
+                <span style={{ fontSize:11, color:T.textMuted }}>{done} de {planTasks.length}</span>
+                <span style={{ fontSize:13, fontWeight:700, color:T.blue }}>{Math.round((done/planTasks.length)*100)}%</span>
               </div>
-              <Prog value={(done/tasksList.length)*100} color={T.blue} h={8} />
+              <Prog value={(done/planTasks.length)*100} color={T.blue} h={8} />
               <div style={{ marginTop:12, display:"flex", gap:10 }}>
                 <div style={{ flex:1, padding:10, borderRadius:10, background:"rgba(34,197,94,0.08)", border:"1px solid rgba(34,197,94,0.2)", textAlign:"center" }}>
                   <div style={{ fontSize:20, fontWeight:800, color:T.green }}>{done}</div>
                   <div style={{ fontSize:10, color:T.textMuted }}>Concluídas</div>
                 </div>
                 <div style={{ flex:1, padding:10, borderRadius:10, background:"rgba(56,139,253,0.08)", border:`1px solid rgba(56,139,253,0.2)`, textAlign:"center" }}>
-                  <div style={{ fontSize:20, fontWeight:800, color:T.blue }}>{tasksList.length-done}</div>
+                  <div style={{ fontSize:20, fontWeight:800, color:T.blue }}>{planTasks.length-done}</div>
                   <div style={{ fontSize:10, color:T.textMuted }}>Pendentes</div>
                 </div>
               </div>
-              {done===tasksList.length && done>0 && (
+              {done===planTasks.length && done>0 && (
                 <motion.div initial={{ opacity:0, scale:0.9 }} animate={{ opacity:1, scale:1 }}
                   style={{ marginTop:12, padding:10, borderRadius:10, background:"rgba(34,197,94,0.1)", border:"1px solid rgba(34,197,94,0.3)", textAlign:"center" }}>
                   <span style={{ fontSize:13, fontWeight:700, color:T.green }}>🎉 Plano concluído!</span>
@@ -586,8 +584,8 @@ const PlanPage = ({ planTasks, setPlanTasks, subjects, onXP }) => {
 
         <GlassCard style={{ padding:20 }}>
           <div style={{ fontSize:12, fontWeight:700, color:T.text, fontFamily:"'Syne',sans-serif", marginBottom:10 }}>📌 Por tipo</div>
-          {TYPES.map(tipo => {
-            const count = tasksList.filter(t=>t.type===tipo).length;
+          {["Estudo","Revisão","Prova","Exercícios","Leitura"].map(tipo => {
+            const count = planTasks.filter(t=>t.type===tipo).length;
             if (count===0) return null;
             return (
               <div key={tipo} style={{ display:"flex", justifyContent:"space-between", padding:"6px 0", borderBottom:`1px solid ${T.border}` }}>
@@ -596,7 +594,6 @@ const PlanPage = ({ planTasks, setPlanTasks, subjects, onXP }) => {
               </div>
             );
           })}
-          {tasksList.length === 0 && <Empty text="Nenhuma tarefa" sub="Adicione tarefas para ver estatísticas" />}
         </GlassCard>
       </div>
 
@@ -608,9 +605,13 @@ const PlanPage = ({ planTasks, setPlanTasks, subjects, onXP }) => {
                 ? <Select value={form.subject} onChange={e => setForm(f=>({...f, subject:e.target.value}))}>
                     <option value="">Selecionar...</option>
                     {subjectOpts.map(s => <option key={s} value={s}>{s}</option>)}
+                    <option value="__custom">Digitar manualmente...</option>
                   </Select>
                 : <Input value={form.subject} onChange={e => setForm(f=>({...f, subject:e.target.value}))} placeholder="Ex: Contabilidade" />
               }
+              {form.subject==="__custom" && <div style={{ marginTop:8 }}>
+                <Input value={form._custom||""} onChange={e => setForm(f=>({...f, _custom:e.target.value, subject:e.target.value}))} placeholder="Nome da matéria" />
+              </div>}
             </Field>
             <Field label="Tópico (opcional)">
               <Input value={form.topic} onChange={e => setForm(f=>({...f, topic:e.target.value}))} placeholder="Ex: Balanço Patrimonial" />
@@ -620,7 +621,7 @@ const PlanPage = ({ planTasks, setPlanTasks, subjects, onXP }) => {
             </Field>
             <Field label="Tipo">
               <Select value={form.type} onChange={e => setForm(f=>({...f, type:e.target.value}))}>
-                {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                {["Estudo","Revisão","Prova","Exercícios","Leitura"].map(t => <option key={t} value={t}>{t}</option>)}
               </Select>
             </Field>
             <Field label="Cor">
@@ -628,7 +629,7 @@ const PlanPage = ({ planTasks, setPlanTasks, subjects, onXP }) => {
             </Field>
             <div style={{ display:"flex", gap:10, justifyContent:"flex-end", marginTop:8 }}>
               <Btn ghost onClick={() => setModal(null)}>Cancelar</Btn>
-              <Btn onClick={save} disabled={!form.subject.trim()}>{modal==="add" ? "Adicionar" : "Salvar"}</Btn>
+              <Btn onClick={save} disabled={!form.subject.trim() || form.subject==="__custom"}>{modal==="add" ? "Adicionar" : "Salvar"}</Btn>
             </div>
           </Modal>
         )}
@@ -649,11 +650,9 @@ const ExamsPage = ({ exams, setExams, onXP }) => {
   const [showExp, setShowExp] = useState(false);
   const [modal, setModal] = useState(null);
   const [delTarget, setDelTarget] = useState(null);
-  const [qModal, setQModal] = useState(null);
+  const [qModal, setQModal] = useState(null); // add question modal
   const [form, setForm] = useState({ title:"", subject:"", color:"blue" });
   const [qForm, setQForm] = useState({ text:"", a:"", b:"", c:"", d:"", correct:"A", explanation:"" });
-
-  const examsList = exams || [];
 
   const startExam = (exam) => {
     if (!exam.questions || exam.questions.length === 0) return;
@@ -689,13 +688,13 @@ const ExamsPage = ({ exams, setExams, onXP }) => {
 
   const saveExam = () => {
     if (!form.title.trim()) return;
-    if (modal==="add") setExams(prev => [...(prev || []), { ...form, id:`exam_${Date.now()}`, questions:[] }]);
-    else setExams(prev => (prev || []).map(e => e.id===modal.edit.id ? { ...e, ...form } : e));
+    if (modal==="add") setExams(prev => [...prev, { ...form, id:`exam_${Date.now()}`, questions:[] }]);
+    else setExams(prev => prev.map(e => e.id===modal.edit.id ? { ...e, ...form } : e));
     setModal(null);
   };
 
   const delExam = () => {
-    setExams(prev => (prev || []).filter(e => e.id!==delTarget.id));
+    setExams(prev => prev.filter(e => e.id!==delTarget.id));
     setDelTarget(null);
   };
 
@@ -706,13 +705,13 @@ const ExamsPage = ({ exams, setExams, onXP }) => {
         { id:"A", text:qForm.a }, { id:"B", text:qForm.b },
         { id:"C", text:qForm.c }, { id:"D", text:qForm.d },
       ].filter(o=>o.text.trim()) };
-    setExams(prev => (prev || []).map(e => e.id===examId ? { ...e, questions:[...(e.questions || []), newQ] } : e));
+    setExams(prev => prev.map(e => e.id===examId ? { ...e, questions:[...e.questions, newQ] } : e));
     setQForm({ text:"", a:"", b:"", c:"", d:"", correct:"A", explanation:"" });
     setQModal(null);
   };
 
   const delQuestion = (examId, qIndex) => {
-    setExams(prev => (prev || []).map(e => e.id===examId ? { ...e, questions:e.questions.filter((_,i)=>i!==qIndex) } : e));
+    setExams(prev => prev.map(e => e.id===examId ? { ...e, questions:e.questions.filter((_,i)=>i!==qIndex) } : e));
   };
 
   // Tela: questão ativa
@@ -805,16 +804,15 @@ const ExamsPage = ({ exams, setExams, onXP }) => {
   return (
     <div>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:18 }}>
-        <div style={{ fontSize:13, color:T.textMuted }}>{examsList.length} simulado{examsList.length!==1?"s":""}</div>
+        <div style={{ fontSize:13, color:T.textMuted }}>{exams.length} simulado{exams.length!==1?"s":""}</div>
         <Btn onClick={() => { setForm({ title:"", subject:"", color:"blue" }); setModal("add"); }}>+ Novo simulado</Btn>
       </div>
 
-      {examsList.length===0
+      {exams.length===0
         ? <GlassCard style={{ padding:40 }}><Empty text="Nenhum simulado criado." sub='Clique em "+ Novo simulado" para criar.' /></GlassCard>
         : <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
-            {examsList.map((e,i) => {
+            {exams.map((e,i) => {
               const col = COLOR_MAP[e.color] || T.blue;
-              const questions = e.questions || [];
               return (
                 <motion.div key={e.id} initial={{ y:16, opacity:0 }} animate={{ y:0, opacity:1 }} transition={{ delay:i*0.06 }}>
                   <GlassCard style={{ padding:20 }}>
@@ -822,7 +820,7 @@ const ExamsPage = ({ exams, setExams, onXP }) => {
                       <div>
                         <div style={{ fontSize:14, fontWeight:700, color:T.text, fontFamily:"'Syne',sans-serif" }}>{e.title}</div>
                         {e.subject && <div style={{ fontSize:11, color:T.textMuted, marginTop:2 }}>{e.subject}</div>}
-                        <div style={{ fontSize:11, color:col, marginTop:4 }}>📝 {questions.length} questão{questions.length!==1?"ões":""}</div>
+                        <div style={{ fontSize:11, color:col, marginTop:4 }}>📝 {e.questions.length} questão{e.questions.length!==1?"ões":""}</div>
                       </div>
                       <div style={{ display:"flex", gap:6 }}>
                         <button onClick={() => setQModal(e.id)} style={{ background:"rgba(56,139,253,0.1)", border:`1px solid rgba(56,139,253,0.2)`, color:T.blue, cursor:"pointer", borderRadius:7, padding:"5px 10px", fontSize:11, fontWeight:600 }}>+ Questão</button>
@@ -832,9 +830,9 @@ const ExamsPage = ({ exams, setExams, onXP }) => {
                     </div>
 
                     {/* Lista de questões */}
-                    {questions.length > 0 && (
+                    {e.questions.length > 0 && (
                       <div style={{ marginBottom:14 }}>
-                        {questions.map((q,qi) => (
+                        {e.questions.map((q,qi) => (
                           <div key={qi} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"8px 10px", borderRadius:8,
                             background:"rgba(255,255,255,0.025)", border:`1px solid ${T.border}`, marginBottom:6 }}>
                             <span style={{ fontSize:11, color:T.textSec, flex:1, marginRight:8 }}>{qi+1}. {q.text.slice(0,60)}{q.text.length>60?"...":""}</span>
@@ -844,8 +842,8 @@ const ExamsPage = ({ exams, setExams, onXP }) => {
                       </div>
                     )}
 
-                    <Btn full disabled={questions.length===0} onClick={() => startExam(e)}
-                      color={col}>{questions.length===0 ? "Adicione questões para iniciar" : `▶ Iniciar simulado (${questions.length} questões)`}</Btn>
+                    <Btn full disabled={e.questions.length===0} onClick={() => startExam(e)}
+                      color={col}>{e.questions.length===0 ? "Adicione questões para iniciar" : `▶ Iniciar simulado (${e.questions.length} questões)`}</Btn>
                   </GlassCard>
                 </motion.div>
               );
@@ -924,24 +922,23 @@ const ReviewsPage = ({ reviews, setReviews, subjects, onXP }) => {
 
   const save = () => {
     if (!form.topic.trim()) return;
-    if (modal==="add") setReviews(prev=>[...(prev || []),{ ...form, id:`rev_${Date.now()}`, done:false }]);
-    else setReviews(prev=>(prev || []).map(r=>r.id===modal.edit.id?{...r,...form}:r));
+    if (modal==="add") setReviews(prev=>[...prev,{ ...form, id:`rev_${Date.now()}`, done:false }]);
+    else setReviews(prev=>prev.map(r=>r.id===modal.edit.id?{...r,...form}:r));
     setModal(null);
   };
 
   const toggle = (id) => {
-    setReviews(prev=>(prev || []).map(r=>{
+    setReviews(prev=>prev.map(r=>{
       if (r.id!==id) return r;
       if (!r.done) onXP(15);
       return {...r, done:!r.done};
     }));
   };
 
-  const del = () => { setReviews(prev=>(prev || []).filter(r=>r.id!==delTarget.id)); setDelTarget(null); };
+  const del = () => { setReviews(prev=>prev.filter(r=>r.id!==delTarget.id)); setDelTarget(null); };
 
-  const reviewsList = reviews || [];
-  const pending = reviewsList.filter(r=>!r.done);
-  const done = reviewsList.filter(r=>r.done);
+  const pending = reviews.filter(r=>!r.done);
+  const done = reviews.filter(r=>r.done);
 
   return (
     <GlassCard style={{ padding:24 }}>
@@ -952,7 +949,7 @@ const ReviewsPage = ({ reviews, setReviews, subjects, onXP }) => {
         </div>
         <div style={{ display:"flex", gap:8 }}>
           {done.length>0 && (
-            <button onClick={() => setReviews(prev=>(prev || []).filter(r=>!r.done))}
+            <button onClick={() => setReviews(prev=>prev.filter(r=>!r.done))}
               style={{ padding:"6px 12px", borderRadius:8, border:"1px solid rgba(239,68,68,0.2)", background:"rgba(239,68,68,0.08)", color:T.red, cursor:"pointer", fontSize:11, fontWeight:600 }}>
               Limpar concluídas
             </button>
@@ -961,7 +958,7 @@ const ReviewsPage = ({ reviews, setReviews, subjects, onXP }) => {
         </div>
       </div>
 
-      {reviewsList.length===0
+      {reviews.length===0
         ? <Empty text="Nenhuma revisão cadastrada." sub='Clique em "+ Revisão" para adicionar.' />
         : <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
             {[...pending, ...done].map((r,i) => {
@@ -1004,7 +1001,7 @@ const ReviewsPage = ({ reviews, setReviews, subjects, onXP }) => {
               <Input value={form.topic} onChange={e=>setForm(f=>({...f,topic:e.target.value}))} placeholder="Ex: Balanço Patrimonial" />
             </Field>
             <Field label="Disciplina (opcional)">
-              {subjects && subjects.length>0
+              {subjects.length>0
                 ? <Select value={form.subject} onChange={e=>setForm(f=>({...f,subject:e.target.value}))}>
                     <option value="">Selecionar...</option>
                     {subjects.map(s=><option key={s.id} value={s.name}>{s.name}</option>)}
@@ -1048,38 +1045,36 @@ const GoalsPage = ({ goals, setGoals, onXP }) => {
   const save = () => {
     if (!form.title.trim()) return;
     const progress = Math.min(100, Math.round((Number(form.current)/Math.max(1,Number(form.target)))*100));
-    if (modal==="add") setGoals(prev=>[...(prev || []),{ ...form, id:`goal_${Date.now()}`, current:Number(form.current), target:Number(form.target), progress }]);
-    else setGoals(prev=>(prev || []).map(g=>g.id===modal.edit.id?{...g,...form,current:Number(form.current),target:Number(form.target),progress}:g));
+    if (modal==="add") setGoals(prev=>[...prev,{ ...form, id:`goal_${Date.now()}`, current:Number(form.current), target:Number(form.target), progress }]);
+    else setGoals(prev=>prev.map(g=>g.id===modal.edit.id?{...g,...form,current:Number(form.current),target:Number(form.target),progress}:g));
     setModal(null);
   };
 
-  const del = () => { setGoals(prev=>(prev || []).filter(g=>g.id!==delTarget.id)); setDelTarget(null); };
+  const del = () => { setGoals(prev=>prev.filter(g=>g.id!==delTarget.id)); setDelTarget(null); };
 
   const updateProgress = (id, delta) => {
-    setGoals(prev=>(prev || []).map(g=>{
+    setGoals(prev=>prev.map(g=>{
       if (g.id!==id) return g;
-      const newCur = Math.min(g.target, Math.max(0, (g.current||0) + delta));
+      const newCur = Math.min(g.target, Math.max(0, g.current+delta));
       const progress = Math.round((newCur/g.target)*100);
-      if (progress>(g.progress||0)) onXP(5);
+      if (progress>g.progress) onXP(5);
       return {...g, current:newCur, progress};
     }));
   };
 
-  const goalsList = goals || [];
-
   return (
     <div>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:18 }}>
-        <div style={{ fontSize:13, color:T.textMuted }}>{goalsList.length} meta{goalsList.length!==1?"s":""} · {goalsList.filter(g=>(g.progress||0)>=100).length} concluída{goalsList.filter(g=>(g.progress||0)>=100).length!==1?"s":""}</div>
+        <div style={{ fontSize:13, color:T.textMuted }}>{goals.length} meta{goals.length!==1?"s":""} · {goals.filter(g=>g.progress>=100).length} concluída{goals.filter(g=>g.progress>=100).length!==1?"s":""}</div>
         <Btn onClick={openAdd}>+ Nova meta</Btn>
       </div>
 
-      {goalsList.length===0
+      {goals.length===0
         ? <GlassCard style={{ padding:40 }}><Empty text="Nenhuma meta criada." sub='Clique em "+ Nova meta" para definir seus objetivos.' /></GlassCard>
         : <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
-            {goalsList.map((g,i) => {
+            {goals.map((g,i) => {
               const col = COLOR_MAP[g.color] || T.blue;
-              const done = (g.progress || 0) >= 100;
+              const done = g.progress >= 100;
               return (
                 <motion.div key={g.id} initial={{ x:-16, opacity:0 }} animate={{ x:0, opacity:1 }} transition={{ delay:i*0.07 }}>
                   <GlassCard style={{ padding:20 }}>
@@ -1093,16 +1088,16 @@ const GoalsPage = ({ goals, setGoals, onXP }) => {
                         </div>
                       </div>
                       <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-                        <span style={{ fontSize:16, fontWeight:800, color:col, fontFamily:"'Syne',sans-serif" }}>{g.progress || 0}%</span>
+                        <span style={{ fontSize:16, fontWeight:800, color:col, fontFamily:"'Syne',sans-serif" }}>{g.progress}%</span>
                         <button onClick={()=>openEdit(g)} style={{ background:"rgba(255,255,255,0.05)", border:`1px solid ${T.border}`, color:T.textMuted, cursor:"pointer", borderRadius:7, padding:"4px 8px", fontSize:11 }}>✏️</button>
                         <button onClick={()=>setDelTarget(g)} style={{ background:"rgba(239,68,68,0.08)", border:"1px solid rgba(239,68,68,0.2)", color:T.red, cursor:"pointer", borderRadius:7, padding:"4px 8px", fontSize:11 }}>🗑️</button>
                       </div>
                     </div>
 
-                    <Prog value={g.progress || 0} color={col} h={7} />
+                    <Prog value={g.progress} color={col} h={7} />
 
                     <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:10 }}>
-                      <span style={{ fontSize:11, color:T.textMuted }}>{(g.current || 0)} / {g.target}</span>
+                      <span style={{ fontSize:11, color:T.textMuted }}>{g.current} / {g.target}</span>
                       {done
                         ? <Badge color="green">🏆 Concluída!</Badge>
                         : <div style={{ display:"flex", gap:8 }}>
@@ -1111,7 +1106,7 @@ const GoalsPage = ({ goals, setGoals, onXP }) => {
                           </div>
                       }
                     </div>
-                    {(g.progress || 0)>=90 && !done && <div style={{ marginTop:8, fontSize:11, color:T.cyan, fontWeight:600 }}>🎉 Quase lá!</div>}
+                    {g.progress>=90 && !done && <div style={{ marginTop:8, fontSize:11, color:T.cyan, fontWeight:600 }}>🎉 Quase lá!</div>}
                   </GlassCard>
                 </motion.div>
               );
@@ -1161,17 +1156,17 @@ const GoalsPage = ({ goals, setGoals, onXP }) => {
 // PERFORMANCE PAGE — baseado nos dados reais do usuário
 // ══════════════════════════════════════════════════════════════════════════════
 const PerformancePage = ({ userProgress, subjects, goals }) => {
-  const totalGoals = goals?.length || 0;
-  const completedGoals = goals?.filter(g=>(g.progress||0)>=100).length || 0;
-  const avgSubjectProgress = subjects && subjects.length>0
-    ? Math.round(subjects.reduce((s,x)=>s+(x.progress||0),0)/subjects.length) : 0;
+  const totalGoals = goals.length;
+  const completedGoals = goals.filter(g=>g.progress>=100).length;
+  const avgSubjectProgress = subjects.length>0
+    ? Math.round(subjects.reduce((s,x)=>s+x.progress,0)/subjects.length) : 0;
 
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:18 }}>
       <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:14 }}>
         {[
-          { label:"XP Total", value:userProgress?.xp || 0, icon:"⭐", color:T.purple },
-          { label:"Nível atual", value:`Lv ${userProgress?.level || 1}`, icon:"🏆", color:T.blue },
+          { label:"XP Total", value:userProgress.xp, icon:"⭐", color:T.purple },
+          { label:"Nível atual", value:`Lv ${userProgress.level}`, icon:"🏆", color:T.blue },
           { label:"Progresso médio", value:`${avgSubjectProgress}%`, icon:"📚", color:T.cyan },
           { label:"Metas concluídas", value:`${completedGoals}/${totalGoals}`, icon:"🎯", color:T.green },
         ].map((m,i)=>(
@@ -1185,7 +1180,7 @@ const PerformancePage = ({ userProgress, subjects, goals }) => {
         ))}
       </div>
 
-      {subjects && subjects.length>0 && (
+      {subjects.length>0 && (
         <GlassCard style={{ padding:22 }}>
           <div style={{ fontSize:14, fontWeight:700, color:T.text, fontFamily:"'Syne',sans-serif", marginBottom:16 }}>📚 Progresso por Disciplina</div>
           <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
@@ -1195,9 +1190,9 @@ const PerformancePage = ({ userProgress, subjects, goals }) => {
                 <div key={s.id}>
                   <div style={{ display:"flex", justifyContent:"space-between", marginBottom:5 }}>
                     <span style={{ fontSize:13, color:T.textSec }}>{s.icon} {s.name}</span>
-                    <span style={{ fontSize:13, fontWeight:700, color:col }}>{s.progress || 0}%</span>
+                    <span style={{ fontSize:13, fontWeight:700, color:col }}>{s.progress}%</span>
                   </div>
-                  <Prog value={s.progress || 0} color={col} h={6} />
+                  <Prog value={s.progress} color={col} h={6} />
                 </div>
               );
             })}
@@ -1205,7 +1200,7 @@ const PerformancePage = ({ userProgress, subjects, goals }) => {
         </GlassCard>
       )}
 
-      {goals && goals.length>0 && (
+      {goals.length>0 && (
         <GlassCard style={{ padding:22 }}>
           <div style={{ fontSize:14, fontWeight:700, color:T.text, fontFamily:"'Syne',sans-serif", marginBottom:16 }}>🎯 Status das Metas</div>
           <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
@@ -1216,11 +1211,11 @@ const PerformancePage = ({ userProgress, subjects, goals }) => {
                   <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
                     <span style={{ fontSize:12, color:T.textSec }}>{g.icon} {g.title}</span>
                     <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                      {(g.progress||0)>=100 && <Badge color="green">Concluída</Badge>}
-                      <span style={{ fontSize:12, fontWeight:700, color:col }}>{g.progress||0}%</span>
+                      {g.progress>=100 && <Badge color="green">Concluída</Badge>}
+                      <span style={{ fontSize:12, fontWeight:700, color:col }}>{g.progress}%</span>
                     </div>
                   </div>
-                  <Prog value={g.progress||0} color={col} h={5} />
+                  <Prog value={g.progress} color={col} h={5} />
                 </div>
               );
             })}
@@ -1234,22 +1229,22 @@ const PerformancePage = ({ userProgress, subjects, goals }) => {
           <div style={{ width:60, height:60, borderRadius:16, background:`linear-gradient(135deg,${T.purple},${T.blue})`,
             display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:800, color:"#fff",
             fontFamily:"'Syne',sans-serif", boxShadow:`0 0 24px ${T.purple}44`, flexShrink:0 }}>
-            Lv{userProgress?.level || 1}
+            Lv{userProgress.level}
           </div>
           <div style={{ flex:1 }}>
             <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
-              <span style={{ fontSize:13, color:T.textSec }}>Nível {userProgress?.level || 1}</span>
-              <span style={{ fontSize:12, color:T.textMuted }}>{(userProgress?.xp || 0)} / {(userProgress?.maxXp || 500)} XP</span>
+              <span style={{ fontSize:13, color:T.textSec }}>Nível {userProgress.level}</span>
+              <span style={{ fontSize:12, color:T.textMuted }}>{userProgress.xp} / {userProgress.maxXp} XP</span>
             </div>
-            <Prog value={((userProgress?.xp || 0)/(userProgress?.maxXp || 500))*100} color={T.purple} h={8} />
-            <div style={{ fontSize:11, color:T.textMuted, marginTop:6 }}>Faltam {(userProgress?.maxXp || 500)-(userProgress?.xp || 0)} XP para o nível {(userProgress?.level || 1)+1}</div>
+            <Prog value={(userProgress.xp/userProgress.maxXp)*100} color={T.purple} h={8} />
+            <div style={{ fontSize:11, color:T.textMuted, marginTop:6 }}>Faltam {userProgress.maxXp-userProgress.xp} XP para o nível {userProgress.level+1}</div>
           </div>
         </div>
         <div style={{ marginTop:16, display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:12, textAlign:"center" }}>
           {[
-            { label:"Streak", value:`${userProgress?.streak || 0} dias`, color:T.orange },
-            { label:"XP acumulado", value:userProgress?.xp || 0, color:T.purple },
-            { label:"Nível", value:userProgress?.level || 1, color:T.blue },
+            { label:"Streak", value:`${userProgress.streak} dias`, color:T.orange },
+            { label:"XP acumulado", value:userProgress.xp, color:T.purple },
+            { label:"Nível", value:userProgress.level, color:T.blue },
           ].map((s,i) => (
             <div key={i} style={{ padding:12, borderRadius:10, background:"rgba(255,255,255,0.025)", border:`1px solid ${T.border}` }}>
               <div style={{ fontSize:20, fontWeight:800, color:s.color, fontFamily:"'Syne',sans-serif" }}>{s.value}</div>
@@ -1297,16 +1292,10 @@ export default function App() {
 
   const addXP = (amount) => {
     setUserProgress(prev => {
-      let { xp, maxXp, level, streak, name } = prev;
+      let { xp, maxXp, level, streak, ...rest } = prev;
       xp += amount;
-      let leveledUp = false;
-      while (xp >= maxXp) { 
-        xp -= maxXp; 
-        level++; 
-        maxXp = Math.round(maxXp * 1.25);
-        leveledUp = true;
-      }
-      return { name, xp, maxXp, level, streak };
+      while (xp >= maxXp) { xp -= maxXp; level++; maxXp = Math.round(maxXp*1.25); }
+      return { ...rest, xp, maxXp, level, streak };
     });
   };
 
