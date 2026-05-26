@@ -1,4 +1,3 @@
-cat > /mnt/user-data/outputs/App.jsx << 'ENDOFFILE' // App.jsx — MeuEstudo — versão totalmente editável e funcional
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
